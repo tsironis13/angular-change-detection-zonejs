@@ -24,6 +24,7 @@ $collapse-button-size: 15px;
     background-color: transparent;
     outline: none;
     margin: 0;
+    cursor: pointer;
   }
 
   &.dirty-check {
@@ -69,20 +70,19 @@ $collapse-button-size: 15px;
   &.view-child {
     border-style: solid;
     > div.component::before {
-      content: '<<ViewChild>>';
+      content: "<<ViewChild>>";
     }
   }
 
   &.content-child {
     border-style: dashed;
     > div.component::before {
-      content: '<<ContentChild>>';
+      content: "<<ContentChild>>";
     }
   }
 
   > div.component {
     > div.state {
-
       > span {
         display: inline-block;
         margin: 2px 0;
@@ -116,7 +116,7 @@ $collapse-button-size: 15px;
         color: #004d1a;
         background-color: #b3ffcc;
         &::before {
-          content: 'attached';
+          content: "attached";
         }
 
         &.cd-detached {
@@ -124,7 +124,7 @@ $collapse-button-size: 15px;
           background-color: #cccccc;
           border-color: #000000;
           &::before {
-            content: 'detached';
+            content: "detached";
           }
         }
       }
@@ -165,7 +165,8 @@ $collapse-button-size: 15px;
       border-spacing: 0;
       border-collapse: collapse;
 
-      td, th {
+      td,
+      th {
         padding: 2px 3px;
         text-align: left;
       }
