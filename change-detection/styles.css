@@ -1,0 +1,28 @@
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[6].rules[0].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[6].rules[0].oneOf[0].use[2]!./node_modules/resolve-url-loader/index.js??ruleSet[1].rules[6].rules[1].use[0]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[6].rules[1].use[1]!./src/styles.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/* You can add global styles to this file, and also import other style files */
+body {
+  font-family: "Arial", sans-serif;
+  box-sizing: border-box;
+}
+app-comp-1 {
+  width: calc(100% - 40px);
+}
+app-comp-1 > div.component > div.children {
+  flex-direction: column !important;
+  justify-content: center;
+}
+button {
+  border: 1px solid darkgray;
+  background-color: white;
+  box-shadow: none;
+  border-radius: 0;
+}
+button.emphasize {
+  background-color: #ddffcc;
+  border-color: #226600;
+  color: #226600;
+}
+
+/*# sourceMappingURL=styles.css.map*/
