@@ -3,7 +3,8 @@
 This project illustrates how Angular change detection works.
 
 ## Live demo URL
-https://danielwiehl.github.io/edu-angular-change-detection/
+
+https://jeanmeche.github.io/angular-change-detection/
 
 ## Development server
 
