@@ -11,12 +11,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AbstractChangeDetectionComponent": () => (/* binding */ AbstractChangeDetectionComponent)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 3184);
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ 8951);
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ 9337);
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/operators */ 116);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 3184);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ 228);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 3280);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 8947);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 3280);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ 635);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ 8977);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/operators */ 8951);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs/operators */ 9337);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs/operators */ 116);
 /* harmony import */ var _expand_collapse_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./expand-collapse.service */ 3869);
 
 
@@ -36,72 +39,93 @@ class AbstractChangeDetectionComponent {
         this._destroyInputObservable$ = new rxjs__WEBPACK_IMPORTED_MODULE_1__.Subject();
         this._expandCollapseState = _expand_collapse_service__WEBPACK_IMPORTED_MODULE_0__.State.Expand;
         this._childType = ChildType.ViewChild;
+        this.markedAsDirty = false;
         this.cdStrategyName = resolveChangeDetectionStrategyName(cdStrategy);
     }
     set contentChild(contentChild) {
-        this._childType = contentChild ? ChildType.ContentChild : ChildType.ViewChild;
+        this._childType = contentChild
+            ? ChildType.ContentChild
+            : ChildType.ViewChild;
     }
     get hostClass() {
-        const childType = (this._childType === ChildType.ViewChild ? 'view-child' : 'content-child');
+        const childType = this._childType === ChildType.ViewChild ? "view-child" : "content-child";
         return `${this.cdStrategyName} ${childType} level-${this._level}`;
     }
     ngAfterViewInit() {
-        this._attachButton.nativeElement.style.display = 'none';
+        this._attachButton.nativeElement.style.display = "none";
         // install outside Angular zone to not trigger change detection upon button click
         this._zone.runOutsideAngular(() => {
+            (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.timer)(0, 500)
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.map)(() => isDirty(this._cd)), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.distinctUntilChanged)())
+                .subscribe((isDirty) => {
+                this.markedAsDirty = isDirty;
+                this._ngMarked.nativeElement.style.display = isDirty
+                    ? "inline"
+                    : "none";
+            });
             // Detect Changes manually
-            (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.fromEvent)(this._dcButton.nativeElement, 'click').pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
-                .subscribe(event => {
+            (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.fromEvent)(this._dcButton.nativeElement, "click")
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
+                .subscribe((event) => {
                 console.log(`ChangeDetectorRef.detectChanges() for ${this.name}`);
                 this._cd.detectChanges();
             });
             // Mark for check
-            (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.fromEvent)(this._mfcButton.nativeElement, 'click').pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
-                .subscribe(event => {
+            (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.fromEvent)(this._mfcButton.nativeElement, "click")
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
+                .subscribe((event) => {
                 console.log(`ChangeDetectorRef.markForCheck() for ${this.name}`);
                 this._cd.markForCheck();
             });
             // Detach change detector
-            (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.fromEvent)(this._detachButton.nativeElement, 'click').pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
-                .subscribe(event => {
+            (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.fromEvent)(this._detachButton.nativeElement, "click")
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
+                .subscribe((event) => {
                 console.log(`ChangeDetectorRef.detach() for ${this.name}`);
                 this._cd.detach();
                 this._colorService.colorChangeDetectorDetached(this._cdStateBox);
-                this._detachButton.nativeElement.style.display = 'none'; // because outside Angular zone
-                this._attachButton.nativeElement.style.display = 'inline';
+                this._detachButton.nativeElement.style.display = "none"; // because outside Angular zone
+                this._attachButton.nativeElement.style.display = "inline";
             });
             // Attach change detector
-            (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.fromEvent)(this._attachButton.nativeElement, 'click').pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
-                .subscribe(event => {
+            (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.fromEvent)(this._attachButton.nativeElement, "click")
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
+                .subscribe((event) => {
                 console.log(`ChangeDetectorRef.reattach() for ${this.name}`);
                 this._cd.reattach();
                 this._colorService.colorChangeDetectorAttached(this._cdStateBox);
-                this._detachButton.nativeElement.style.display = 'inline'; // because outside Angular zone
-                this._attachButton.nativeElement.style.display = 'none';
+                this._detachButton.nativeElement.style.display = "inline"; // because outside Angular zone
+                this._attachButton.nativeElement.style.display = "none";
             });
             // Toggle visibility
-            (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.fromEvent)(this._toggleVisiblity.nativeElement, 'click').pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._destroy$))
-                .subscribe(event => {
-                const toggledState = (this._expandCollapseState === _expand_collapse_service__WEBPACK_IMPORTED_MODULE_0__.State.Expand ? _expand_collapse_service__WEBPACK_IMPORTED_MODULE_0__.State.Collapse : _expand_collapse_service__WEBPACK_IMPORTED_MODULE_0__.State.Expand);
+            (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.fromEvent)(this._toggleVisiblity.nativeElement, "click")
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.takeUntil)(this._destroy$))
+                .subscribe((event) => {
+                const toggledState = this._expandCollapseState === _expand_collapse_service__WEBPACK_IMPORTED_MODULE_0__.State.Expand
+                    ? _expand_collapse_service__WEBPACK_IMPORTED_MODULE_0__.State.Collapse
+                    : _expand_collapse_service__WEBPACK_IMPORTED_MODULE_0__.State.Expand;
                 this.setExpandCollapseState(toggledState);
             });
-            this._dirtyCheckColoringService.busy$.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._destroy$))
-                .subscribe(busy => {
+            this._dirtyCheckColoringService.busy$
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.takeUntil)(this._destroy$))
+                .subscribe((busy) => {
                 this._dcButton.nativeElement.disabled = busy;
                 this._mfcButton.nativeElement.disabled = busy;
                 this._attachButton.nativeElement.disabled = busy;
                 this._detachButton.nativeElement.disabled = busy;
                 this._clickButton.nativeElement.disabled = busy;
             });
-            this._expandCollapseService.contentChildren$.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.filter)(_ => this._childType === ChildType.ContentChild))
-                .subscribe(state => this.setExpandCollapseState(state));
+            this._expandCollapseService.contentChildren$
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.filter)((_) => this._childType === ChildType.ContentChild))
+                .subscribe((state) => this.setExpandCollapseState(state));
         });
     }
     ngOnChanges(changes) {
         if (changes.inputObservable) {
             this._destroyInputObservable$.next();
-            this.inputObservable.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._destroyInputObservable$))
-                .subscribe(value => this.inputObservableValue = value);
+            this.inputObservable
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.takeUntil)(this._destroyInputObservable$))
+                .subscribe((value) => (this.inputObservableValue = value));
         }
         this._colorService.colorNgOnChanges(this._ngOnChangesBox);
     }
@@ -121,40 +145,42 @@ class AbstractChangeDetectionComponent {
     setExpandCollapseState(state) {
         this._expandCollapseState = state;
         if (state === _expand_collapse_service__WEBPACK_IMPORTED_MODULE_0__.State.Expand) {
-            this._componentField.nativeElement.style.display = 'inline';
-            this._toggleVisiblity.nativeElement.innerHTML = '-';
+            this._componentField.nativeElement.style.display = "inline";
+            this._toggleVisiblity.nativeElement.innerHTML = "-";
         }
         else {
-            this._componentField.nativeElement.style.display = 'none';
-            this._toggleVisiblity.nativeElement.innerHTML = '+';
+            this._componentField.nativeElement.style.display = "none";
+            this._toggleVisiblity.nativeElement.innerHTML = "+";
         }
     }
 }
 AbstractChangeDetectionComponent.propDecorators = {
-    _componentField: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.ViewChild, args: ['component', { static: true },] }],
-    _mfcButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.ViewChild, args: ['mfc_button', { static: true }, // mark for check
+    _componentField: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["component", { static: true },] }],
+    _mfcButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["mfc_button", { static: true }, // mark for check
             ] }],
-    _dcButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.ViewChild, args: ['dc_button', { static: true }, // detect changes
+    _dcButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["dc_button", { static: true }, // detect changes
             ] }],
-    _detachButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.ViewChild, args: ['detach_button', { static: true }, // detach change detector
+    _detachButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["detach_button", { static: true }, // detach change detector
             ] }],
-    _attachButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.ViewChild, args: ['attach_button', { static: true }, // attach change detector
+    _attachButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["attach_button", { static: true }, // attach change detector
             ] }],
-    _clickButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.ViewChild, args: ['click_button', { static: true }, // attach change detector
+    _clickButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["click_button", { static: true }, // attach change detector
             ] }],
-    _toggleVisiblity: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.ViewChild, args: ['toggle_visiblity', { static: true },] }],
-    _cdStateBox: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.ViewChild, args: ['cd_state_box', { static: true },] }],
-    _ngDoCheckBox: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.ViewChild, args: ['ng_do_check_box', { static: true },] }],
-    _ngOnChangesBox: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.ViewChild, args: ['ng_on_changes_box', { static: true },] }],
-    inputByRef: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.Input }],
-    inputByVal: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.Input }],
-    inputObservable: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.Input }],
-    contentChild: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.Input }],
-    hostClass: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_6__.HostBinding, args: ['attr.class',] }]
+    _toggleVisiblity: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["toggle_visiblity", { static: true },] }],
+    _cdStateBox: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["cd_state_box", { static: true },] }],
+    _ngDoCheckBox: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["ng_do_check_box", { static: true },] }],
+    _ngOnChangesBox: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["ng_on_changes_box", { static: true },] }],
+    _ngMarked: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.ViewChild, args: ["ng_marked", { static: true },] }],
+    inputByRef: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.Input }],
+    inputByVal: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.Input }],
+    inputObservable: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.Input }],
+    contentChild: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.Input }],
+    hostClass: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_9__.HostBinding, args: ["attr.class",] }]
 };
 function resolveChangeDetectionStrategyName(strategy) {
-    for (const name in _angular_core__WEBPACK_IMPORTED_MODULE_6__.ChangeDetectionStrategy) {
-        if (_angular_core__WEBPACK_IMPORTED_MODULE_6__.ChangeDetectionStrategy[name] === strategy && _angular_core__WEBPACK_IMPORTED_MODULE_6__.ChangeDetectionStrategy.hasOwnProperty(name)) {
+    for (const name in _angular_core__WEBPACK_IMPORTED_MODULE_9__.ChangeDetectionStrategy) {
+        if (_angular_core__WEBPACK_IMPORTED_MODULE_9__.ChangeDetectionStrategy[name] === strategy &&
+            _angular_core__WEBPACK_IMPORTED_MODULE_9__.ChangeDetectionStrategy.hasOwnProperty(name)) {
             return name;
         }
     }
@@ -165,6 +191,13 @@ var ChildType;
     ChildType[ChildType["ViewChild"] = 0] = "ViewChild";
     ChildType[ChildType["ContentChild"] = 1] = "ContentChild";
 })(ChildType || (ChildType = {}));
+function isDirty(cdRef) {
+    const flags = cdRef._lView[2];
+    return getBit(flags, 5) === 1;
+}
+function getBit(number, bitPosition) {
+    return (number & (1 << bitPosition)) === 0 ? 0 : 1;
+}
 
 
 /***/ }),
@@ -479,6 +512,7 @@ function template(children) {
             <span #cd_state_box class="cd-state-box"></span>
             <span #ng_do_check_box class="ng-do-check-box">ngDoCheck</span>
             <span #ng_on_changes_box class="ng-on-changes-box">ngOnChanges</span>
+            <span #ng_marked style="display:none">Marked</span>
           </div>
           <div class="name">
             {{name}}
