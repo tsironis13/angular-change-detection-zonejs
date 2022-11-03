@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "ng serve",
+    "build": "ng build",
     "update": "npm-check -u"
   },
   "private": true,
