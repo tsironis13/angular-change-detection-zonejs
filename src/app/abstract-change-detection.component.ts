@@ -10,51 +10,61 @@ import {
   OnChanges,
   OnDestroy,
   SimpleChanges,
-  ViewChild
-} from '@angular/core';
-import { filter, takeUntil, tap } from 'rxjs/operators';
-import { ColorService } from './color.service';
-import { Observable, Subject, fromEvent } from 'rxjs';
-import { NumberHolder } from './number-holder';
-import { DirtyCheckColoringService } from './dirty-check-coloring.service';
-import { ExpandCollapseService, State } from './expand-collapse.service';
+  ViewChild,
+} from "@angular/core";
+import { fromEvent, Observable, Subject, timer } from "rxjs";
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  takeUntil,
+  tap,
+} from "rxjs/operators";
+import { ColorService } from "./color.service";
+import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
+import { ExpandCollapseService, State } from "./expand-collapse.service";
+import { NumberHolder } from "./number-holder";
 
-export abstract class AbstractChangeDetectionComponent implements AfterViewInit, OnChanges, DoCheck, OnDestroy {
-
+export abstract class AbstractChangeDetectionComponent
+  implements AfterViewInit, OnChanges, DoCheck, OnDestroy
+{
   private _destroy$ = new Subject<void>();
   private _destroyInputObservable$ = new Subject<void>();
   private _expandCollapseState = State.Expand;
   private _childType = ChildType.ViewChild;
 
-  @ViewChild('component', { static: true })
+  @ViewChild("component", { static: true })
   private _componentField: ElementRef;
 
-  @ViewChild('mfc_button', { static: true }) // mark for check
+  @ViewChild("mfc_button", { static: true }) // mark for check
   private _mfcButton: ElementRef;
 
-  @ViewChild('dc_button', { static: true }) // detect changes
+  @ViewChild("dc_button", { static: true }) // detect changes
   private _dcButton: ElementRef;
 
-  @ViewChild('detach_button', { static: true }) // detach change detector
+  @ViewChild("detach_button", { static: true }) // detach change detector
   private _detachButton: ElementRef;
 
-  @ViewChild('attach_button', { static: true }) // attach change detector
+  @ViewChild("attach_button", { static: true }) // attach change detector
   private _attachButton: ElementRef;
 
-  @ViewChild('click_button', { static: true }) // attach change detector
+  @ViewChild("click_button", { static: true }) // attach change detector
   private _clickButton: ElementRef;
 
-  @ViewChild('toggle_visiblity', { static: true })
+  @ViewChild("toggle_visiblity", { static: true })
   private _toggleVisiblity: ElementRef;
 
-  @ViewChild('cd_state_box', { static: true })
+  @ViewChild("cd_state_box", { static: true })
   private _cdStateBox: ElementRef;
 
-  @ViewChild('ng_do_check_box', { static: true })
+  @ViewChild("ng_do_check_box", { static: true })
   private _ngDoCheckBox: ElementRef;
 
-  @ViewChild('ng_on_changes_box', { static: true })
+  @ViewChild("ng_on_changes_box", { static: true })
   private _ngOnChangesBox: ElementRef;
+
+  @ViewChild("ng_marked", { static: true })
+  private _ngMarked: ElementRef;
 
   @Input()
   public inputByRef: NumberHolder;
@@ -67,110 +77,142 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
 
   @Input()
   public set contentChild(contentChild: boolean) {
-    this._childType = contentChild ? ChildType.ContentChild : ChildType.ViewChild;
+    this._childType = contentChild
+      ? ChildType.ContentChild
+      : ChildType.ViewChild;
   }
 
-  @HostBinding('attr.class')
+  @HostBinding("attr.class")
   public get hostClass(): string {
-    const childType = (this._childType === ChildType.ViewChild ? 'view-child' : 'content-child');
+    const childType =
+      this._childType === ChildType.ViewChild ? "view-child" : "content-child";
     return `${this.cdStrategyName} ${childType} level-${this._level}`;
   }
 
   public inputObservableValue: number;
   public cdStrategyName: string;
+  public markedAsDirty: boolean = false;
 
-  constructor(public name: string, private _level: number, private _hostRef: ElementRef, private _colorService: ColorService, private _dirtyCheckColoringService: DirtyCheckColoringService, private _expandCollapseService: ExpandCollapseService, private _cd: ChangeDetectorRef, private _zone: NgZone, cdStrategy: ChangeDetectionStrategy) {
+  constructor(
+    public name: string,
+    private _level: number,
+    private _hostRef: ElementRef,
+    private _colorService: ColorService,
+    private _dirtyCheckColoringService: DirtyCheckColoringService,
+    private _expandCollapseService: ExpandCollapseService,
+    private _cd: ChangeDetectorRef,
+    private _zone: NgZone,
+    cdStrategy: ChangeDetectionStrategy
+  ) {
     this.cdStrategyName = resolveChangeDetectionStrategyName(cdStrategy);
   }
 
   public ngAfterViewInit(): void {
-    this._attachButton.nativeElement.style.display = 'none';
+    this._attachButton.nativeElement.style.display = "none";
 
     // install outside Angular zone to not trigger change detection upon button click
     this._zone.runOutsideAngular(() => {
+      timer(0, 500)
+        .pipe(
+          map(() => isDirty(this._cd)),
+          distinctUntilChanged()
+        )
+        .subscribe((isDirty) => {
+          this.markedAsDirty = isDirty;
+          this._ngMarked.nativeElement.style.display = isDirty
+            ? "inline"
+            : "none";
+        });
+
       // Detect Changes manually
-      fromEvent(this._dcButton.nativeElement, 'click').pipe(
-        takeUntil(this._destroy$),
-        tap(() => this._dirtyCheckColoringService.clearColoring())
-      )
-      .subscribe(event => {
-        console.log(`ChangeDetectorRef.detectChanges() for ${this.name}`);
-        this._cd.detectChanges();
-      });
+      fromEvent(this._dcButton.nativeElement, "click")
+        .pipe(
+          takeUntil(this._destroy$),
+          tap(() => this._dirtyCheckColoringService.clearColoring())
+        )
+        .subscribe((event) => {
+          console.log(`ChangeDetectorRef.detectChanges() for ${this.name}`);
+          this._cd.detectChanges();
+        });
 
       // Mark for check
-      fromEvent(this._mfcButton.nativeElement, 'click').pipe(
-        takeUntil(this._destroy$),
-        tap(() => this._dirtyCheckColoringService.clearColoring())
-      )
-      .subscribe(event => {
-        console.log(`ChangeDetectorRef.markForCheck() for ${this.name}`);
-        this._cd.markForCheck();
-      });
+      fromEvent(this._mfcButton.nativeElement, "click")
+        .pipe(
+          takeUntil(this._destroy$),
+          tap(() => this._dirtyCheckColoringService.clearColoring())
+        )
+        .subscribe((event) => {
+          console.log(`ChangeDetectorRef.markForCheck() for ${this.name}`);
+          this._cd.markForCheck();
+        });
 
       // Detach change detector
-      fromEvent(this._detachButton.nativeElement, 'click').pipe(
-        takeUntil(this._destroy$),
-        tap(() => this._dirtyCheckColoringService.clearColoring())
-      )
-      .subscribe(event => {
-        console.log(`ChangeDetectorRef.detach() for ${this.name}`);
-        this._cd.detach();
-        this._colorService.colorChangeDetectorDetached(this._cdStateBox);
-        this._detachButton.nativeElement.style.display = 'none'; // because outside Angular zone
-        this._attachButton.nativeElement.style.display = 'inline';
-      });
+      fromEvent(this._detachButton.nativeElement, "click")
+        .pipe(
+          takeUntil(this._destroy$),
+          tap(() => this._dirtyCheckColoringService.clearColoring())
+        )
+        .subscribe((event) => {
+          console.log(`ChangeDetectorRef.detach() for ${this.name}`);
+          this._cd.detach();
+          this._colorService.colorChangeDetectorDetached(this._cdStateBox);
+          this._detachButton.nativeElement.style.display = "none"; // because outside Angular zone
+          this._attachButton.nativeElement.style.display = "inline";
+        });
 
       // Attach change detector
-      fromEvent(this._attachButton.nativeElement, 'click').pipe(
-        takeUntil(this._destroy$),
-        tap(() => this._dirtyCheckColoringService.clearColoring())
-      )
-      .subscribe(event => {
-        console.log(`ChangeDetectorRef.reattach() for ${this.name}`);
-        this._cd.reattach();
-        this._colorService.colorChangeDetectorAttached(this._cdStateBox);
-        this._detachButton.nativeElement.style.display = 'inline'; // because outside Angular zone
-        this._attachButton.nativeElement.style.display = 'none';
-      });
+      fromEvent(this._attachButton.nativeElement, "click")
+        .pipe(
+          takeUntil(this._destroy$),
+          tap(() => this._dirtyCheckColoringService.clearColoring())
+        )
+        .subscribe((event) => {
+          console.log(`ChangeDetectorRef.reattach() for ${this.name}`);
+          this._cd.reattach();
+          this._colorService.colorChangeDetectorAttached(this._cdStateBox);
+          this._detachButton.nativeElement.style.display = "inline"; // because outside Angular zone
+          this._attachButton.nativeElement.style.display = "none";
+        });
 
       // Toggle visibility
-      fromEvent(this._toggleVisiblity.nativeElement, 'click').pipe(
-        takeUntil(this._destroy$)
-      )
-      .subscribe(event => {
-        const toggledState = (this._expandCollapseState === State.Expand ? State.Collapse : State.Expand);
-        this.setExpandCollapseState(toggledState);
-      });
+      fromEvent(this._toggleVisiblity.nativeElement, "click")
+        .pipe(takeUntil(this._destroy$))
+        .subscribe((event) => {
+          const toggledState =
+            this._expandCollapseState === State.Expand
+              ? State.Collapse
+              : State.Expand;
+          this.setExpandCollapseState(toggledState);
+        });
 
-      this._dirtyCheckColoringService.busy$.pipe(
-        takeUntil(this._destroy$)
-      )
-      .subscribe(busy => {
-        this._dcButton.nativeElement.disabled = busy;
-        this._mfcButton.nativeElement.disabled = busy;
-        this._attachButton.nativeElement.disabled = busy;
-        this._detachButton.nativeElement.disabled = busy;
-        this._clickButton.nativeElement.disabled = busy;
-      });
+      this._dirtyCheckColoringService.busy$
+        .pipe(takeUntil(this._destroy$))
+        .subscribe((busy) => {
+          this._dcButton.nativeElement.disabled = busy;
+          this._mfcButton.nativeElement.disabled = busy;
+          this._attachButton.nativeElement.disabled = busy;
+          this._detachButton.nativeElement.disabled = busy;
+          this._clickButton.nativeElement.disabled = busy;
+        });
 
-      this._expandCollapseService.contentChildren$.pipe(
-        takeUntil(this._destroy$),
-        filter(_ => this._childType === ChildType.ContentChild)
-      )
-      .subscribe(state => this.setExpandCollapseState(state));
+      this._expandCollapseService.contentChildren$
+        .pipe(
+          takeUntil(this._destroy$),
+          filter((_) => this._childType === ChildType.ContentChild)
+        )
+        .subscribe((state) => this.setExpandCollapseState(state));
     });
   }
-
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes.inputObservable) {
       this._destroyInputObservable$.next();
-      this.inputObservable.pipe(
-        takeUntil(this._destroy$),
-        takeUntil(this._destroyInputObservable$)
-      )
-      .subscribe(value => this.inputObservableValue = value);
+      this.inputObservable
+        .pipe(
+          takeUntil(this._destroy$),
+          takeUntil(this._destroyInputObservable$)
+        )
+        .subscribe((value) => (this.inputObservableValue = value));
     }
     this._colorService.colorNgOnChanges(this._ngOnChangesBox);
   }
@@ -195,18 +237,21 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   private setExpandCollapseState(state: State): void {
     this._expandCollapseState = state;
     if (state === State.Expand) {
-      this._componentField.nativeElement.style.display = 'inline';
-      this._toggleVisiblity.nativeElement.innerHTML = '-';
+      this._componentField.nativeElement.style.display = "inline";
+      this._toggleVisiblity.nativeElement.innerHTML = "-";
     } else {
-      this._componentField.nativeElement.style.display = 'none';
-      this._toggleVisiblity.nativeElement.innerHTML = '+';
+      this._componentField.nativeElement.style.display = "none";
+      this._toggleVisiblity.nativeElement.innerHTML = "+";
     }
   }
 }
 
 function resolveChangeDetectionStrategyName(strategy: any): string {
   for (const name in ChangeDetectionStrategy) {
-    if (ChangeDetectionStrategy[ name ] === strategy && ChangeDetectionStrategy.hasOwnProperty(name)) {
+    if (
+      ChangeDetectionStrategy[name] === strategy &&
+      ChangeDetectionStrategy.hasOwnProperty(name)
+    ) {
       return name;
     }
   }
@@ -215,5 +260,18 @@ function resolveChangeDetectionStrategyName(strategy: any): string {
 }
 
 enum ChildType {
-  ViewChild, ContentChild
+  ViewChild,
+  ContentChild,
+}
+
+function isDirty(cdRef: ChangeDetectorRef): boolean {
+  const flags: LComponentView = (cdRef as any)._lView[2];
+
+  return getBit(flags, 5) === 1;
+}
+
+type LComponentView = [unknown, unknown, number, ...Array<unknown>];
+
+function getBit(number: any, bitPosition: number): 1 | 0 {
+  return (number & (1 << bitPosition)) === 0 ? 0 : 1;
 }

@@ -8,6 +8,7 @@ export function template(children: string): string {
             <span #cd_state_box class="cd-state-box"></span>
             <span #ng_do_check_box class="ng-do-check-box">ngDoCheck</span>
             <span #ng_on_changes_box class="ng-on-changes-box">ngOnChanges</span>
+            <span #ng_marked style="display:none">Marked</span>
           </div>
           <div class="name">
             {{name}}
