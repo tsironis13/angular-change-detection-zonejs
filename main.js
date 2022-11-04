@@ -134,6 +134,9 @@ let AbstractChangeDetectionComponent = class AbstractChangeDetectionComponent {
     ngOnDestroy() {
         this._destroy$.complete();
     }
+    get touch() {
+        return this._colorService.colorDirtyCheck(this._hostRef);
+    }
     onClick() {
         console.log(`Click for ${this.name}`);
     }
@@ -156,16 +159,11 @@ AbstractChangeDetectionComponent.ctorParameters = () => [
 ];
 AbstractChangeDetectionComponent.propDecorators = {
     _componentField: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["component", { static: true },] }],
-    _mfcButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["mfc_button", { static: true }, // mark for check
-            ] }],
-    _dcButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["dc_button", { static: true }, // detect changes
-            ] }],
-    _detachButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["detach_button", { static: true }, // detach change detector
-            ] }],
-    _attachButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["attach_button", { static: true }, // attach change detector
-            ] }],
-    _clickButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["click_button", { static: true }, // attach change detector
-            ] }],
+    _mfcButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["mfc_button", { static: true },] }],
+    _dcButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["dc_button", { static: true },] }],
+    _detachButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["detach_button", { static: true },] }],
+    _attachButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["attach_button", { static: true },] }],
+    _clickButton: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["click_button", { static: true },] }],
     _toggleVisiblity: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["toggle_visiblity", { static: true },] }],
     _cdStateBox: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["cd_state_box", { static: true },] }],
     _ngDoCheckBox: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.ViewChild, args: ["ng_do_check_box", { static: true },] }],
