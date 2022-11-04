@@ -1,7 +1,17 @@
-import { AfterViewInit, ApplicationRef, Component, ElementRef, NgZone, OnDestroy, ViewChild } from "@angular/core";
+import {
+  ApplicationRef,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { fromEvent, Subject } from "rxjs";
-import { map, takeUntil, tap } from "rxjs/operators";
+import { map, takeUntil } from "rxjs/operators";
 import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
+import { CD_STRATEGY, LEVEL } from "./dynamic-children/dynamic-children.component";
 import { ExpandCollapseService, State } from "./expand-collapse.service";
 import { NumberHolder } from "./number-holder";
 
@@ -9,38 +19,26 @@ import { NumberHolder } from "./number-holder";
   selector: "app-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
+  providers: [
+    { provide: LEVEL, useValue: 1 },
+    { provide: CD_STRATEGY, useValue: ChangeDetectionStrategy.Default },
+  ],
 })
-export class AppComponent implements AfterViewInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   private _destroy$ = new Subject<void>();
 
   private value = 0;
-  public inputByVal!: number;
-  public inputByRef = new NumberHolder();
-  public inputObservable = new Subject<number>();
+  protected inputByVal!: number;
+  protected inputByRef = new NumberHolder();
+  protected inputObservable = new Subject<number>();
 
-  @ViewChild("apptick_button", { static: true })
-  private _apptickButton!: ElementRef;
-
-  @ViewChild("timeout_button", { static: true })
-  private _timeoutButton!: ElementRef;
-
-  @ViewChild("click_button", { static: true })
-  private _clickButton!: ElementRef;
-
-  @ViewChild("trigger_change", { static: true })
-  private _triggerChangeButton!: ElementRef;
-
-  @ViewChild("clear", { static: true })
-  private _clearButton!: ElementRef;
-
-  @ViewChild("auto_clear", { static: true })
-  private _autoClearCheckbox!: ElementRef<HTMLInputElement>;
-
-  @ViewChild("toggle_content_children", { static: true })
-  private _toggleContentChildren!: ElementRef<HTMLElement>;
-
-  @ViewChild("input_value_field", { static: true })
-  private _inputValueField!: ElementRef<HTMLElement>;
+  @ViewChild("apptick_button", { static: true }) private _apptickButton!: ElementRef;
+  @ViewChild("timeout_button", { static: true }) private _timeoutButton!: ElementRef;
+  @ViewChild("trigger_change", { static: true }) private _triggerChangeButton!: ElementRef;
+  @ViewChild("clear", { static: true }) private _clearButton!: ElementRef;
+  @ViewChild("auto_clear", { static: true }) private _autoClearCheckbox!: ElementRef<HTMLInputElement>;
+  @ViewChild("toggle_content_children", { static: true }) private _toggleContentChildren!: ElementRef<HTMLElement>;
+  @ViewChild("input_value_field", { static: true }) private _inputValueField!: ElementRef<HTMLElement>;
 
   @ViewChild("propagate_by_value_checkbox", { static: true })
   private _propagateByValueCheckbox!: ElementRef<HTMLInputElement>;
@@ -61,17 +59,17 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     private _expandCollapseService: ExpandCollapseService
   ) {}
 
-  public ngAfterViewInit(): void {
+  public ngOnInit(): void {
     this._dirtyCheckColoringService.setAutoClearColoring(this.isAutoClear());
 
     this._zone.runOutsideAngular(() => {
       // apptick
       fromEvent(this._apptickButton.nativeElement, "click")
-        .pipe(
-          tap(() => this._dirtyCheckColoringService.clearColoring()),
-          takeUntil(this._destroy$)
-        )
-        .subscribe(() => this._appRef.tick());
+        .pipe(takeUntil(this._destroy$))
+        .subscribe(() => {
+          this._dirtyCheckColoringService.clearColoring();
+          this._appRef.tick();
+        });
 
       // timeout
       fromEvent(this._timeoutButton.nativeElement, "click")
@@ -99,11 +97,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
       // Change input
       fromEvent(this._triggerChangeButton.nativeElement, "click")
-        .pipe(
-          takeUntil(this._destroy$),
-          tap(() => this._dirtyCheckColoringService.clearColoring())
-        )
-        .subscribe((_) => {
+        .pipe(takeUntil(this._destroy$))
+        .subscribe(() => {
           if (this.isPropagateInZone()) {
             this._zone.run(() => this.updateInputValue());
           } else {
@@ -114,7 +109,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       // Toggle content children
       fromEvent(this._toggleContentChildren.nativeElement, "click")
         .pipe(takeUntil(this._destroy$))
-        .subscribe((_) => this._expandCollapseService.toggleContentChildren());
+        .subscribe(() => this._expandCollapseService.toggleContentChildren());
 
       // Toggle ContentChildren
       this._expandCollapseService.contentChildren$.pipe(takeUntil(this._destroy$)).subscribe((state) => {
@@ -124,15 +119,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
       // Busy
       this._dirtyCheckColoringService.busy$.pipe(takeUntil(this._destroy$)).subscribe((busy) => {
-        this._apptickButton.nativeElement.disabled = busy;
-        this._timeoutButton.nativeElement.disabled = busy;
-        this._clickButton.nativeElement.disabled = busy;
-        this._autoClearCheckbox.nativeElement.disabled = busy;
-        this._triggerChangeButton.nativeElement.disabled = busy;
-        this._propagateByValueCheckbox.nativeElement.disabled = busy;
-        this._propagateByRefCheckbox.nativeElement.disabled = busy;
-        this._propagateByObservableCheckbox.nativeElement.disabled = busy;
-        this._propagateInZoneCheckbox.nativeElement.disabled = busy;
         if (busy && !this._dirtyCheckColoringService.isAutoClearColoring) {
           this._clearButton.nativeElement.classList.add("emphasize");
         } else {
@@ -163,8 +149,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     }
 
     // Update DOM directly because outside Angular zone to not trigger change detection
-    const valueElement = this._inputValueField.nativeElement;
-    valueElement.innerHTML = this.value.toString(10);
+    this._inputValueField.nativeElement.innerHTML = this.value.toString(10);
   }
 
   private isAutoClear(): boolean {

@@ -1,5 +1,5 @@
 export function template(children: string = ""): string {
-  return `
+	return `
         {{touch}}
         <button class="toggle-visibility" #toggle_visiblity>-</button>
         <div #component class="component">

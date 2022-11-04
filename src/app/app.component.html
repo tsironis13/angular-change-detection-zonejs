@@ -2,16 +2,21 @@
   <section>
     <header>Trigger global actions</header>
     <nav>
-      <button #apptick_button>AppRef.tick()</button>
-      <button #timeout_button title="Installs a timeout to run in 3s (in ng-zone)">setTimeout(...)</button>
-      <button #click_button (click)="clickNoop()" title="Click with a NoOp">Click</button>
+      <button #apptick_button disableWhenBusyz>AppRef.tick()</button>
+      <button #timeout_button disableWhenBusy title="Installs a timeout to run in 3s (in ng-zone)">
+        setTimeout(...)
+      </button>
+      <button disableWhenBusy (click)="clickNoop()" title="Click with a NoOp">Click</button>
     </nav>
   </section>
 
   <section>
     <header>Control dirty check coloring</header>
     <nav>
-      <label><input type="checkbox" #auto_clear checked>Clear dirty check coloring automatically</label>
+      <label>
+        <input disableWhenBusy type="checkbox" #auto_clear checked />
+        Clear dirty check coloring automatically
+      </label>
       <span class="filler"></span>
       <button #clear>Clear</button>
     </nav>
@@ -20,11 +25,39 @@
   <section>
     <header>Play with component input - current value: <span #input_value_field>n/a</span></header>
     <nav>
-      <button #trigger_change>Trigger change</button>
-      <label><input type="checkbox" #propagate_by_value_checkbox checked title="Provides the new value as a new object (ref-change)">change input object (ref-change)</label>
-      <label><input type="checkbox" #propagate_by_ref_checkbox checked title="Provides the new value by mutating the input object (no-ref-change)">mutate input object (no ref-change)</label>
-      <label><input type="checkbox" #propagate_by_observable_checkbox checked title="Publishes the new value via Observable">via Observable (no ref-change)</label>
-      <label><input type="checkbox" #propagate_in_zone_checkbox checked>Propagate in Angular zone</label>
+      <button #trigger_change disableWhenBusy>Trigger change</button>
+      <label>
+        <input
+          type="checkbox"
+          disableWhenBusy
+          #propagate_by_value_checkbox
+          checked
+          title="Provides the new value as a new object (ref-change)"
+        />
+        change input object (ref-change)
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          disableWhenBusy
+          #propagate_by_ref_checkbox
+          checked
+          title="Provides the new value by mutating the input object (no-ref-change)"
+        />mutate input object (no ref-change)
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          disableWhenBusy
+          #propagate_by_observable_checkbox
+          checked
+          title="Publishes the new value via Observable"
+        />via Observable (no ref-change)
+      </label>
+      <label>
+        <input type="checkbox" disableWhenBusy #propagate_in_zone_checkbox checked />
+        Propagate in Angular zone
+      </label>
     </nav>
   </section>
 
@@ -37,16 +70,22 @@
 </div>
 
 <main>
-  <app-comp-1 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1>
+  <!-- <app-comp-1 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1> -->
 
+  <dynamic-children
+    [inputByVal]="inputByVal"
+    [inputByRef]="inputByRef"
+    [inputObservable]="inputObservable"
+  ></dynamic-children>
   <div class="explanation">
     <section>
       <header>ngDoCheck</header>
       <article>
-        <p>Lifecycle hook that is called when Angular dirty checks a directive.</p><br>
+        <p>Lifecycle hook that is called when Angular dirty checks a directive.</p>
+        <br />
         'ngDoCheck' gets called to check the changes in the directives in addition to the default algorithm. The default
         change detection algorithm looks for differences by comparing bound-property values by reference across change
-        detection runs.<br>
+        detection runs.<br />
         The ngDoCheck lifecycle hook is triggered even if the the component uses OnPush strategy.
       </article>
     </section>
@@ -54,7 +93,8 @@
     <section>
       <header>ngOnChanges</header>
       <article>
-        <p>Lifecycle hook that is called when any data-bound property of a directive changes.</p><br>
+        <p>Lifecycle hook that is called when any data-bound property of a directive changes.</p>
+        <br />
         `ngOnChanges` is called right after the data-bound properties have been checked and before view and content
         children are checked if at least one of them has changed.
       </article>
@@ -63,8 +103,20 @@
     <section>
       <header>Good readings</header>
       <ul>
-        <li><a href="https://blog.angularindepth.com/everything-you-need-to-know-about-change-detection-in-angular-8006c51d206f" target="_blank">Everything you need to know about change detection in Angular</a></li>
-        <li><a href="https://blog.thoughtram.io/angular/2016/02/22/angular-2-change-detection-explained.html" target="_blank">ANGULAR CHANGE DETECTION EXPLAINED</a></li>
+        <li>
+          <a
+            href="https://blog.angularindepth.com/everything-you-need-to-know-about-change-detection-in-angular-8006c51d206f"
+            target="_blank"
+            >Everything you need to know about change detection in Angular</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://blog.thoughtram.io/angular/2016/02/22/angular-2-change-detection-explained.html"
+            target="_blank"
+            >ANGULAR CHANGE DETECTION EXPLAINED</a
+          >
+        </li>
       </ul>
     </section>
   </div>
