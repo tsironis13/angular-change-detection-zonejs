@@ -28,47 +28,23 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   private _expandCollapseState = State.Expand;
   private _childType = ChildType.ViewChild;
 
-  @ViewChild("component", { static: true })
-  private _componentField!: ElementRef;
+  @ViewChild("component", { static: true }) private _componentField!: ElementRef;
+  @ViewChild("mfc_button", { static: true }) private _mfcButton!: ElementRef;
+  @ViewChild("dc_button", { static: true }) private _dcButton!: ElementRef;
+  @ViewChild("detach_button", { static: true }) private _detachButton!: ElementRef;
+  @ViewChild("attach_button", { static: true }) private _attachButton!: ElementRef;
+  @ViewChild("click_button", { static: true }) private _clickButton!: ElementRef;
+  @ViewChild("toggle_visiblity", { static: true }) private _toggleVisiblity!: ElementRef;
+  @ViewChild("cd_state_box", { static: true }) private _cdStateBox!: ElementRef;
+  @ViewChild("ng_do_check_box", { static: true }) private _ngDoCheckBox!: ElementRef;
+  @ViewChild("ng_on_changes_box", { static: true }) private _ngOnChangesBox!: ElementRef;
+  @ViewChild("ng_marked", { static: true }) private _ngMarked!: ElementRef;
 
-  @ViewChild("mfc_button", { static: true }) // mark for check
-  private _mfcButton!: ElementRef;
+  @Input() public inputByRef!: NumberHolder;
 
-  @ViewChild("dc_button", { static: true }) // detect changes
-  private _dcButton!: ElementRef;
+  @Input() public inputByVal!: number;
 
-  @ViewChild("detach_button", { static: true }) // detach change detector
-  private _detachButton!: ElementRef;
-
-  @ViewChild("attach_button", { static: true }) // attach change detector
-  private _attachButton!: ElementRef;
-
-  @ViewChild("click_button", { static: true }) // attach change detector
-  private _clickButton!: ElementRef;
-
-  @ViewChild("toggle_visiblity", { static: true })
-  private _toggleVisiblity!: ElementRef;
-
-  @ViewChild("cd_state_box", { static: true })
-  private _cdStateBox!: ElementRef;
-
-  @ViewChild("ng_do_check_box", { static: true })
-  private _ngDoCheckBox!: ElementRef;
-
-  @ViewChild("ng_on_changes_box", { static: true })
-  private _ngOnChangesBox!: ElementRef;
-
-  @ViewChild("ng_marked", { static: true })
-  private _ngMarked!: ElementRef;
-
-  @Input()
-  public inputByRef!: NumberHolder;
-
-  @Input()
-  public inputByVal!: number;
-
-  @Input()
-  public inputObservable!: Observable<number>;
+  @Input() public inputObservable!: Observable<number>;
 
   @Input()
   public set contentChild(contentChild: boolean) {
@@ -202,6 +178,10 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
 
   public ngOnDestroy(): void {
     this._destroy$.complete();
+  }
+
+  public get touch(): void {
+    return this._colorService.colorDirtyCheck(this._hostRef);
   }
 
   public onClick(): void {
