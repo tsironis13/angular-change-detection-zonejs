@@ -2,9 +2,11 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Directive,
   DoCheck,
   ElementRef,
   HostBinding,
+  inject,
   Input,
   NgZone,
   OnChanges,
@@ -25,6 +27,7 @@ import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
 import { ExpandCollapseService, State } from "./expand-collapse.service";
 import { NumberHolder } from "./number-holder";
 
+@Directive()
 export abstract class AbstractChangeDetectionComponent
   implements AfterViewInit, OnChanges, DoCheck, OnDestroy
 {
@@ -93,15 +96,16 @@ export abstract class AbstractChangeDetectionComponent
   public cdStrategyName: string;
   public markedAsDirty: boolean = false;
 
+  private _hostRef = inject(ElementRef);
+  private _colorService = inject(ColorService);
+  private _dirtyCheckColoringService = inject(DirtyCheckColoringService);
+  private _expandCollapseService = inject(ExpandCollapseService);
+  private _cd = inject(ChangeDetectorRef);
+  private _zone = inject(NgZone);
+
   constructor(
     public name: string,
     private _level: number,
-    private _hostRef: ElementRef,
-    private _colorService: ColorService,
-    private _dirtyCheckColoringService: DirtyCheckColoringService,
-    private _expandCollapseService: ExpandCollapseService,
-    private _cd: ChangeDetectorRef,
-    private _zone: NgZone,
     cdStrategy: ChangeDetectionStrategy
   ) {
     this.cdStrategyName = resolveChangeDetectionStrategyName(cdStrategy);
