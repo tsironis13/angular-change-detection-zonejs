@@ -11,11 +11,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AbstractChangeDetectionComponent": () => (/* binding */ AbstractChangeDetectionComponent)
 /* harmony export */ });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! tslib */ 4929);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 3184);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 228);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 8947);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs */ 3280);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! rxjs */ 6646);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/operators */ 635);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs/operators */ 8977);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs/operators */ 8951);
@@ -49,9 +50,7 @@ let AbstractChangeDetectionComponent = class AbstractChangeDetectionComponent {
         this.cdStrategyName = resolveChangeDetectionStrategyName(cdStrategy);
     }
     set contentChild(contentChild) {
-        this._childType = contentChild
-            ? ChildType.ContentChild
-            : ChildType.ViewChild;
+        this._childType = contentChild ? ChildType.ContentChild : ChildType.ViewChild;
     }
     get hostClass() {
         const childType = this._childType === ChildType.ViewChild ? "view-child" : "content-child";
@@ -65,28 +64,26 @@ let AbstractChangeDetectionComponent = class AbstractChangeDetectionComponent {
                 .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.map)(() => isDirty(this._cd)), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.distinctUntilChanged)())
                 .subscribe((isDirty) => {
                 this.markedAsDirty = isDirty;
-                this._ngMarked.nativeElement.style.display = isDirty
-                    ? "inline"
-                    : "none";
+                this._ngMarked.nativeElement.style.display = isDirty ? "inline" : "none";
             });
             // Detect Changes manually
             (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.fromEvent)(this._dcButton.nativeElement, "click")
                 .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
-                .subscribe((event) => {
+                .subscribe(() => {
                 console.log(`ChangeDetectorRef.detectChanges() for ${this.name}`);
                 this._cd.detectChanges();
             });
             // Mark for check
             (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.fromEvent)(this._mfcButton.nativeElement, "click")
                 .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
-                .subscribe((event) => {
+                .subscribe(() => {
                 console.log(`ChangeDetectorRef.markForCheck() for ${this.name}`);
                 this._cd.markForCheck();
             });
             // Detach change detector
             (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.fromEvent)(this._detachButton.nativeElement, "click")
                 .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
-                .subscribe((event) => {
+                .subscribe(() => {
                 console.log(`ChangeDetectorRef.detach() for ${this.name}`);
                 this._cd.detach();
                 this._colorService.colorChangeDetectorDetached(this._cdStateBox);
@@ -96,7 +93,7 @@ let AbstractChangeDetectionComponent = class AbstractChangeDetectionComponent {
             // Attach change detector
             (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.fromEvent)(this._attachButton.nativeElement, "click")
                 .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
-                .subscribe((event) => {
+                .subscribe(() => {
                 console.log(`ChangeDetectorRef.reattach() for ${this.name}`);
                 this._cd.reattach();
                 this._colorService.colorChangeDetectorAttached(this._cdStateBox);
@@ -106,15 +103,11 @@ let AbstractChangeDetectionComponent = class AbstractChangeDetectionComponent {
             // Toggle visibility
             (0,rxjs__WEBPACK_IMPORTED_MODULE_8__.fromEvent)(this._toggleVisiblity.nativeElement, "click")
                 .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroy$))
-                .subscribe((event) => {
-                const toggledState = this._expandCollapseState === _expand_collapse_service__WEBPACK_IMPORTED_MODULE_2__.State.Expand
-                    ? _expand_collapse_service__WEBPACK_IMPORTED_MODULE_2__.State.Collapse
-                    : _expand_collapse_service__WEBPACK_IMPORTED_MODULE_2__.State.Expand;
+                .subscribe(() => {
+                const toggledState = this._expandCollapseState === _expand_collapse_service__WEBPACK_IMPORTED_MODULE_2__.State.Expand ? _expand_collapse_service__WEBPACK_IMPORTED_MODULE_2__.State.Collapse : _expand_collapse_service__WEBPACK_IMPORTED_MODULE_2__.State.Expand;
                 this.setExpandCollapseState(toggledState);
             });
-            this._dirtyCheckColoringService.busy$
-                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroy$))
-                .subscribe((busy) => {
+            this._dirtyCheckColoringService.busy$.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroy$)).subscribe((busy) => {
                 this._dcButton.nativeElement.disabled = busy;
                 this._mfcButton.nativeElement.disabled = busy;
                 this._attachButton.nativeElement.disabled = busy;
@@ -122,7 +115,7 @@ let AbstractChangeDetectionComponent = class AbstractChangeDetectionComponent {
                 this._clickButton.nativeElement.disabled = busy;
             });
             this._expandCollapseService.contentChildren$
-                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_11__.filter)((_) => this._childType === ChildType.ContentChild))
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_11__.filter)(() => this._childType === ChildType.ContentChild))
                 .subscribe((state) => this.setExpandCollapseState(state));
         });
     }
@@ -130,7 +123,7 @@ let AbstractChangeDetectionComponent = class AbstractChangeDetectionComponent {
         if (changes.inputObservable) {
             this._destroyInputObservable$.next();
             this.inputObservable
-                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)(this._destroyInputObservable$))
+                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.takeUntil)((0,rxjs__WEBPACK_IMPORTED_MODULE_12__.merge)(this._destroy$, this._destroyInputObservable$)))
                 .subscribe((value) => (this.inputObservableValue = value));
         }
         this._colorService.colorNgOnChanges(this._ngOnChangesBox);
@@ -140,10 +133,6 @@ let AbstractChangeDetectionComponent = class AbstractChangeDetectionComponent {
     }
     ngOnDestroy() {
         this._destroy$.complete();
-    }
-    get touch() {
-        this._colorService.colorDirtyCheck(this._hostRef);
-        return null;
     }
     onClick() {
         console.log(`Click for ${this.name}`);
@@ -188,24 +177,18 @@ AbstractChangeDetectionComponent.propDecorators = {
     contentChild: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.Input }],
     hostClass: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_4__.HostBinding, args: ["attr.class",] }]
 };
-AbstractChangeDetectionComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_12__.__decorate)([
+AbstractChangeDetectionComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_13__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Directive)()
 ], AbstractChangeDetectionComponent);
 
-function resolveChangeDetectionStrategyName(strategy) {
-    for (const name in _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy) {
-        if (_angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy[name] === strategy &&
-            _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.hasOwnProperty(name)) {
-            return name;
-        }
-    }
-    return undefined;
-}
 var ChildType;
 (function (ChildType) {
     ChildType[ChildType["ViewChild"] = 0] = "ViewChild";
     ChildType[ChildType["ContentChild"] = 1] = "ContentChild";
 })(ChildType || (ChildType = {}));
+function resolveChangeDetectionStrategyName(strategy) {
+    return _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy[strategy];
+}
 function isDirty(cdRef) {
     const flags = cdRef._lView[2];
     return getBit(flags, 5) === 1;
@@ -256,7 +239,6 @@ let AppComponent = class AppComponent {
         this._expandCollapseService = _expandCollapseService;
         this._destroy$ = new rxjs__WEBPACK_IMPORTED_MODULE_5__.Subject();
         this.value = 0;
-        this.busy = false;
         this.inputByRef = new _number_holder__WEBPACK_IMPORTED_MODULE_4__.NumberHolder();
         this.inputObservable = new rxjs__WEBPACK_IMPORTED_MODULE_5__.Subject();
     }
@@ -282,7 +264,7 @@ let AppComponent = class AppComponent {
             // clear
             (0,rxjs__WEBPACK_IMPORTED_MODULE_6__.fromEvent)(this._clearButton.nativeElement, "click")
                 .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.takeUntil)(this._destroy$))
-                .subscribe((_) => {
+                .subscribe(() => {
                 this._dirtyCheckColoringService.clearColoring();
             });
             // Change input
@@ -290,7 +272,7 @@ let AppComponent = class AppComponent {
                 .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.takeUntil)(this._destroy$), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.tap)(() => this._dirtyCheckColoringService.clearColoring()))
                 .subscribe((_) => {
                 if (this.isPropagateInZone()) {
-                    this._zone.run(this.updateInputValue.bind(this));
+                    this._zone.run(() => this.updateInputValue());
                 }
                 else {
                     this.updateInputValue();
@@ -301,21 +283,12 @@ let AppComponent = class AppComponent {
                 .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.takeUntil)(this._destroy$))
                 .subscribe((_) => this._expandCollapseService.toggleContentChildren());
             // Toggle ContentChildren
-            this._expandCollapseService.contentChildren$
-                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.takeUntil)(this._destroy$))
-                .subscribe((state) => {
-                const button = this._toggleContentChildren
-                    .nativeElement;
-                button.innerHTML =
-                    state === _expand_collapse_service__WEBPACK_IMPORTED_MODULE_3__.State.Expand
-                        ? "Collapse ContentChildren"
-                        : "Expand ContentChildren";
+            this._expandCollapseService.contentChildren$.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.takeUntil)(this._destroy$)).subscribe((state) => {
+                const button = this._toggleContentChildren.nativeElement;
+                button.innerHTML = state === _expand_collapse_service__WEBPACK_IMPORTED_MODULE_3__.State.Expand ? "Collapse ContentChildren" : "Expand ContentChildren";
             });
             // Busy
-            this._dirtyCheckColoringService.busy$
-                .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.takeUntil)(this._destroy$))
-                .subscribe((busy) => {
-                this.busy = busy;
+            this._dirtyCheckColoringService.busy$.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.takeUntil)(this._destroy$)).subscribe((busy) => {
                 this._apptickButton.nativeElement.disabled = busy;
                 this._timeoutButton.nativeElement.disabled = busy;
                 this._clickButton.nativeElement.disabled = busy;
@@ -325,7 +298,7 @@ let AppComponent = class AppComponent {
                 this._propagateByRefCheckbox.nativeElement.disabled = busy;
                 this._propagateByObservableCheckbox.nativeElement.disabled = busy;
                 this._propagateInZoneCheckbox.nativeElement.disabled = busy;
-                if (busy && !this._dirtyCheckColoringService.isAutoClearColoring()) {
+                if (busy && !this._dirtyCheckColoringService.isAutoClearColoring) {
                     this._clearButton.nativeElement.classList.add("emphasize");
                 }
                 else {
@@ -359,19 +332,16 @@ let AppComponent = class AppComponent {
         return this._autoClearCheckbox.nativeElement.checked;
     }
     isPropagateByValue() {
-        return this._propagateByValueCheckbox.nativeElement
-            .checked;
+        return this._propagateByValueCheckbox.nativeElement.checked;
     }
     isPropagateByRef() {
-        return this._propagateByRefCheckbox.nativeElement
-            .checked;
+        return this._propagateByRefCheckbox.nativeElement.checked;
     }
     isPropagateByObservable() {
         return this._propagateByObservableCheckbox.nativeElement.checked;
     }
     isPropagateInZone() {
-        return this._propagateInZoneCheckbox.nativeElement
-            .checked;
+        return this._propagateInZoneCheckbox.nativeElement.checked;
     }
 };
 AppComponent.ctorParameters = () => [
@@ -416,39 +386,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AppModule": () => (/* binding */ AppModule)
 /* harmony export */ });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! tslib */ 4929);
-/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! @angular/platform-browser */ 318);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! @angular/platform-browser */ 318);
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app.component */ 5041);
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! @angular/forms */ 587);
-/* harmony import */ var _comp_tree_comp_1_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./comp-tree/comp-1.component */ 9003);
-/* harmony import */ var _comp_tree_comp_1_1_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./comp-tree/comp-1-1.component */ 3441);
-/* harmony import */ var _comp_tree_comp_1_2_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./comp-tree/comp-1-2.component */ 6735);
-/* harmony import */ var _comp_tree_comp_1_x_1_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./comp-tree/comp-1-x-1.component */ 6013);
-/* harmony import */ var _comp_tree_comp_1_x_1_1_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./comp-tree/comp-1-x-1-1.component */ 465);
-/* harmony import */ var _comp_tree_comp_1_x_1_2_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./comp-tree/comp-1-x-1-2.component */ 9206);
-/* harmony import */ var _comp_tree_comp_1_x_1_3_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./comp-tree/comp-1-x-1-3.component */ 5483);
-/* harmony import */ var _comp_tree_comp_1_x_1_4_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./comp-tree/comp-1-x-1-4.component */ 820);
-/* harmony import */ var _comp_tree_comp_1_x_2_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./comp-tree/comp-1-x-2.component */ 7425);
-/* harmony import */ var _comp_tree_comp_1_x_2_1_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./comp-tree/comp-1-x-2-1.component */ 584);
-/* harmony import */ var _comp_tree_comp_1_x_2_2_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./comp-tree/comp-1-x-2-2.component */ 3543);
-/* harmony import */ var _comp_tree_comp_1_x_2_3_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./comp-tree/comp-1-x-2-3.component */ 4272);
-/* harmony import */ var _comp_tree_comp_1_x_2_4_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./comp-tree/comp-1-x-2-4.component */ 7109);
-/* harmony import */ var _comp_tree_comp_1_x_3_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./comp-tree/comp-1-x-3.component */ 1142);
-/* harmony import */ var _comp_tree_comp_1_x_3_1_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./comp-tree/comp-1-x-3-1.component */ 7269);
-/* harmony import */ var _comp_tree_comp_1_x_3_2_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./comp-tree/comp-1-x-3-2.component */ 7597);
-/* harmony import */ var _comp_tree_comp_1_x_3_3_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./comp-tree/comp-1-x-3-3.component */ 9497);
-/* harmony import */ var _comp_tree_comp_1_x_3_4_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./comp-tree/comp-1-x-3-4.component */ 6222);
-/* harmony import */ var _comp_tree_comp_1_x_4_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./comp-tree/comp-1-x-4.component */ 8602);
-/* harmony import */ var _comp_tree_comp_1_x_4_1_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./comp-tree/comp-1-x-4-1.component */ 5099);
-/* harmony import */ var _comp_tree_comp_1_x_4_2_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./comp-tree/comp-1-x-4-2.component */ 7216);
-/* harmony import */ var _comp_tree_comp_1_x_4_3_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./comp-tree/comp-1-x-4-3.component */ 6137);
-/* harmony import */ var _comp_tree_comp_1_x_4_4_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./comp-tree/comp-1-x-4-4.component */ 5166);
-/* harmony import */ var _dirty_check_coloring_service__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./dirty-check-coloring.service */ 6202);
-/* harmony import */ var _expand_collapse_service__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./expand-collapse.service */ 3869);
-
-
-
+/* harmony import */ var _comp_tree_comp_1_1_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./comp-tree/comp-1-1.component */ 3441);
+/* harmony import */ var _comp_tree_comp_1_2_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./comp-tree/comp-1-2.component */ 6735);
+/* harmony import */ var _comp_tree_comp_1_x_1_1_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./comp-tree/comp-1-x-1-1.component */ 465);
+/* harmony import */ var _comp_tree_comp_1_x_1_2_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./comp-tree/comp-1-x-1-2.component */ 9206);
+/* harmony import */ var _comp_tree_comp_1_x_1_3_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./comp-tree/comp-1-x-1-3.component */ 5483);
+/* harmony import */ var _comp_tree_comp_1_x_1_4_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./comp-tree/comp-1-x-1-4.component */ 820);
+/* harmony import */ var _comp_tree_comp_1_x_1_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./comp-tree/comp-1-x-1.component */ 6013);
+/* harmony import */ var _comp_tree_comp_1_x_2_1_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./comp-tree/comp-1-x-2-1.component */ 584);
+/* harmony import */ var _comp_tree_comp_1_x_2_2_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./comp-tree/comp-1-x-2-2.component */ 3543);
+/* harmony import */ var _comp_tree_comp_1_x_2_3_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./comp-tree/comp-1-x-2-3.component */ 4272);
+/* harmony import */ var _comp_tree_comp_1_x_2_4_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./comp-tree/comp-1-x-2-4.component */ 7109);
+/* harmony import */ var _comp_tree_comp_1_x_2_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./comp-tree/comp-1-x-2.component */ 7425);
+/* harmony import */ var _comp_tree_comp_1_x_3_1_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./comp-tree/comp-1-x-3-1.component */ 7269);
+/* harmony import */ var _comp_tree_comp_1_x_3_2_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./comp-tree/comp-1-x-3-2.component */ 7597);
+/* harmony import */ var _comp_tree_comp_1_x_3_3_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./comp-tree/comp-1-x-3-3.component */ 9497);
+/* harmony import */ var _comp_tree_comp_1_x_3_4_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./comp-tree/comp-1-x-3-4.component */ 6222);
+/* harmony import */ var _comp_tree_comp_1_x_3_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./comp-tree/comp-1-x-3.component */ 1142);
+/* harmony import */ var _comp_tree_comp_1_x_4_1_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./comp-tree/comp-1-x-4-1.component */ 5099);
+/* harmony import */ var _comp_tree_comp_1_x_4_2_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./comp-tree/comp-1-x-4-2.component */ 7216);
+/* harmony import */ var _comp_tree_comp_1_x_4_3_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./comp-tree/comp-1-x-4-3.component */ 6137);
+/* harmony import */ var _comp_tree_comp_1_x_4_4_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./comp-tree/comp-1-x-4-4.component */ 5166);
+/* harmony import */ var _comp_tree_comp_1_x_4_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./comp-tree/comp-1-x-4.component */ 8602);
+/* harmony import */ var _comp_tree_comp_1_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./comp-tree/comp-1.component */ 9003);
 
 
 
@@ -478,44 +442,37 @@ __webpack_require__.r(__webpack_exports__);
 
 let AppModule = class AppModule {
 };
-AppModule = (0,tslib__WEBPACK_IMPORTED_MODULE_26__.__decorate)([
-    (0,_angular_core__WEBPACK_IMPORTED_MODULE_27__.NgModule)({
+AppModule = (0,tslib__WEBPACK_IMPORTED_MODULE_24__.__decorate)([
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_25__.NgModule)({
         declarations: [
             _app_component__WEBPACK_IMPORTED_MODULE_0__.AppComponent,
-            _comp_tree_comp_1_component__WEBPACK_IMPORTED_MODULE_1__.Comp_1_Component,
-            _comp_tree_comp_1_1_component__WEBPACK_IMPORTED_MODULE_2__.Comp_1_1_Component,
-            _comp_tree_comp_1_2_component__WEBPACK_IMPORTED_MODULE_3__.Comp_1_2_Component,
-            _comp_tree_comp_1_x_1_component__WEBPACK_IMPORTED_MODULE_4__.Comp_1_x_1_Component,
-            _comp_tree_comp_1_x_1_1_component__WEBPACK_IMPORTED_MODULE_5__.Comp_1_x_1_1_Component,
-            _comp_tree_comp_1_x_1_2_component__WEBPACK_IMPORTED_MODULE_6__.Comp_1_x_1_2_Component,
-            _comp_tree_comp_1_x_1_3_component__WEBPACK_IMPORTED_MODULE_7__.Comp_1_x_1_3_Component,
-            _comp_tree_comp_1_x_1_4_component__WEBPACK_IMPORTED_MODULE_8__.Comp_1_x_1_4_Component,
-            _comp_tree_comp_1_x_2_component__WEBPACK_IMPORTED_MODULE_9__.Comp_1_x_2_Component,
-            _comp_tree_comp_1_x_2_1_component__WEBPACK_IMPORTED_MODULE_10__.Comp_1_x_2_1_Component,
-            _comp_tree_comp_1_x_2_2_component__WEBPACK_IMPORTED_MODULE_11__.Comp_1_x_2_2_Component,
-            _comp_tree_comp_1_x_2_3_component__WEBPACK_IMPORTED_MODULE_12__.Comp_1_x_2_3_Component,
-            _comp_tree_comp_1_x_2_4_component__WEBPACK_IMPORTED_MODULE_13__.Comp_1_x_2_4_Component,
-            _comp_tree_comp_1_x_3_component__WEBPACK_IMPORTED_MODULE_14__.Comp_1_x_3_Component,
-            _comp_tree_comp_1_x_3_1_component__WEBPACK_IMPORTED_MODULE_15__.Comp_1_x_3_1_Component,
-            _comp_tree_comp_1_x_3_2_component__WEBPACK_IMPORTED_MODULE_16__.Comp_1_x_3_2_Component,
-            _comp_tree_comp_1_x_3_3_component__WEBPACK_IMPORTED_MODULE_17__.Comp_1_x_3_3_Component,
-            _comp_tree_comp_1_x_3_4_component__WEBPACK_IMPORTED_MODULE_18__.Comp_1_x_3_4_Component,
-            _comp_tree_comp_1_x_4_component__WEBPACK_IMPORTED_MODULE_19__.Comp_1_x_4_Component,
-            _comp_tree_comp_1_x_4_1_component__WEBPACK_IMPORTED_MODULE_20__.Comp_1_x_4_1_Component,
-            _comp_tree_comp_1_x_4_2_component__WEBPACK_IMPORTED_MODULE_21__.Comp_1_x_4_2_Component,
-            _comp_tree_comp_1_x_4_3_component__WEBPACK_IMPORTED_MODULE_22__.Comp_1_x_4_3_Component,
-            _comp_tree_comp_1_x_4_4_component__WEBPACK_IMPORTED_MODULE_23__.Comp_1_x_4_4_Component
+            _comp_tree_comp_1_component__WEBPACK_IMPORTED_MODULE_23__.Comp_1_Component,
+            _comp_tree_comp_1_1_component__WEBPACK_IMPORTED_MODULE_1__.Comp_1_1_Component,
+            _comp_tree_comp_1_2_component__WEBPACK_IMPORTED_MODULE_2__.Comp_1_2_Component,
+            _comp_tree_comp_1_x_1_component__WEBPACK_IMPORTED_MODULE_7__.Comp_1_x_1_Component,
+            _comp_tree_comp_1_x_1_1_component__WEBPACK_IMPORTED_MODULE_3__.Comp_1_x_1_1_Component,
+            _comp_tree_comp_1_x_1_2_component__WEBPACK_IMPORTED_MODULE_4__.Comp_1_x_1_2_Component,
+            _comp_tree_comp_1_x_1_3_component__WEBPACK_IMPORTED_MODULE_5__.Comp_1_x_1_3_Component,
+            _comp_tree_comp_1_x_1_4_component__WEBPACK_IMPORTED_MODULE_6__.Comp_1_x_1_4_Component,
+            _comp_tree_comp_1_x_2_component__WEBPACK_IMPORTED_MODULE_12__.Comp_1_x_2_Component,
+            _comp_tree_comp_1_x_2_1_component__WEBPACK_IMPORTED_MODULE_8__.Comp_1_x_2_1_Component,
+            _comp_tree_comp_1_x_2_2_component__WEBPACK_IMPORTED_MODULE_9__.Comp_1_x_2_2_Component,
+            _comp_tree_comp_1_x_2_3_component__WEBPACK_IMPORTED_MODULE_10__.Comp_1_x_2_3_Component,
+            _comp_tree_comp_1_x_2_4_component__WEBPACK_IMPORTED_MODULE_11__.Comp_1_x_2_4_Component,
+            _comp_tree_comp_1_x_3_component__WEBPACK_IMPORTED_MODULE_17__.Comp_1_x_3_Component,
+            _comp_tree_comp_1_x_3_1_component__WEBPACK_IMPORTED_MODULE_13__.Comp_1_x_3_1_Component,
+            _comp_tree_comp_1_x_3_2_component__WEBPACK_IMPORTED_MODULE_14__.Comp_1_x_3_2_Component,
+            _comp_tree_comp_1_x_3_3_component__WEBPACK_IMPORTED_MODULE_15__.Comp_1_x_3_3_Component,
+            _comp_tree_comp_1_x_3_4_component__WEBPACK_IMPORTED_MODULE_16__.Comp_1_x_3_4_Component,
+            _comp_tree_comp_1_x_4_component__WEBPACK_IMPORTED_MODULE_22__.Comp_1_x_4_Component,
+            _comp_tree_comp_1_x_4_1_component__WEBPACK_IMPORTED_MODULE_18__.Comp_1_x_4_1_Component,
+            _comp_tree_comp_1_x_4_2_component__WEBPACK_IMPORTED_MODULE_19__.Comp_1_x_4_2_Component,
+            _comp_tree_comp_1_x_4_3_component__WEBPACK_IMPORTED_MODULE_20__.Comp_1_x_4_3_Component,
+            _comp_tree_comp_1_x_4_4_component__WEBPACK_IMPORTED_MODULE_21__.Comp_1_x_4_4_Component,
         ],
-        imports: [
-            _angular_platform_browser__WEBPACK_IMPORTED_MODULE_28__.BrowserModule,
-            _angular_forms__WEBPACK_IMPORTED_MODULE_29__.ReactiveFormsModule,
-            _angular_forms__WEBPACK_IMPORTED_MODULE_29__.FormsModule
-        ],
-        providers: [
-            _dirty_check_coloring_service__WEBPACK_IMPORTED_MODULE_24__.DirtyCheckColoringService,
-            _expand_collapse_service__WEBPACK_IMPORTED_MODULE_25__.ExpandCollapseService
-        ],
-        bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_0__.AppComponent]
+        imports: [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_26__.BrowserModule],
+        providers: [],
+        bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_0__.AppComponent],
     })
 ], AppModule);
 
@@ -533,7 +490,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "template": () => (/* binding */ template)
 /* harmony export */ });
-function template(children) {
+function template(children = "") {
     return `
         {{touch}}
         <button class="toggle-visibility" #toggle_visiblity>-</button>
@@ -594,13 +551,13 @@ let ColorService = class ColorService {
     colorNgDoCheck(elementRef) {
         this._zone.runOutsideAngular(() => {
             clearTimeout(this.ngDoCheckHandle);
-            this.ngDoCheckHandle = this.blink(elementRef.nativeElement, 'ng-do-check');
+            this.ngDoCheckHandle = this.blink(elementRef.nativeElement, "ng-do-check");
         });
     }
     colorNgOnChanges(elementRef) {
         this._zone.runOutsideAngular(() => {
             clearTimeout(this.ngOnChangesHandle);
-            this.ngOnChangesHandle = this.blink(elementRef.nativeElement, 'ng-on-changes');
+            this.ngOnChangesHandle = this.blink(elementRef.nativeElement, "ng-on-changes");
         });
     }
     colorDirtyCheck(elementRef) {
@@ -610,19 +567,17 @@ let ColorService = class ColorService {
     }
     colorChangeDetectorDetached(hostRef) {
         this._zone.runOutsideAngular(() => {
-            const host = hostRef.nativeElement;
-            host.classList.add('cd-detached');
+            hostRef.nativeElement.classList.add("cd-detached");
         });
     }
     colorChangeDetectorAttached(hostRef) {
         this._zone.runOutsideAngular(() => {
-            const host = hostRef.nativeElement;
-            host.classList.remove('cd-detached');
+            hostRef.nativeElement.classList.remove("cd-detached");
         });
     }
     blink(element, cssClass) {
         element.classList.add(cssClass);
-        return setTimeout(() => element.classList.remove(cssClass), 1500);
+        return window.setTimeout(() => element.classList.remove(cssClass), 1500);
     }
 };
 ColorService.ctorParameters = () => [
@@ -772,7 +727,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-1-1";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.Default;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_1_1_Component = class Comp_1_x_1_1_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -782,7 +736,7 @@ Comp_1_x_1_1_Component.ctorParameters = () => [];
 Comp_1_x_1_1_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -818,7 +772,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-1-2";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.OnPush;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_1_2_Component = class Comp_1_x_1_2_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -828,7 +781,7 @@ Comp_1_x_1_2_Component.ctorParameters = () => [];
 Comp_1_x_1_2_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -864,7 +817,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-1-3";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.Default;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_1_3_Component = class Comp_1_x_1_3_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -874,7 +826,7 @@ Comp_1_x_1_3_Component.ctorParameters = () => [];
 Comp_1_x_1_3_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -910,7 +862,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-1-4";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.OnPush;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_1_4_Component = class Comp_1_x_1_4_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -920,7 +871,7 @@ Comp_1_x_1_4_Component.ctorParameters = () => [];
 Comp_1_x_1_4_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1005,7 +956,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-2-1";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.Default;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_2_1_Component = class Comp_1_x_2_1_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1015,7 +965,7 @@ Comp_1_x_2_1_Component.ctorParameters = () => [];
 Comp_1_x_2_1_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1051,7 +1001,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-2-2";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.OnPush;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_2_2_Component = class Comp_1_x_2_2_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1061,7 +1010,7 @@ Comp_1_x_2_2_Component.ctorParameters = () => [];
 Comp_1_x_2_2_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1097,7 +1046,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-2-3";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.Default;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_2_3_Component = class Comp_1_x_2_3_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1107,7 +1055,7 @@ Comp_1_x_2_3_Component.ctorParameters = () => [];
 Comp_1_x_2_3_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1143,7 +1091,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-2-4";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.OnPush;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_2_4_Component = class Comp_1_x_2_4_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1153,7 +1100,7 @@ Comp_1_x_2_4_Component.ctorParameters = () => [];
 Comp_1_x_2_4_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1238,7 +1185,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-3-1";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.Default;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_3_1_Component = class Comp_1_x_3_1_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1248,7 +1194,7 @@ Comp_1_x_3_1_Component.ctorParameters = () => [];
 Comp_1_x_3_1_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1284,7 +1230,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-3-2";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.OnPush;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_3_2_Component = class Comp_1_x_3_2_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1294,7 +1239,7 @@ Comp_1_x_3_2_Component.ctorParameters = () => [];
 Comp_1_x_3_2_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1330,7 +1275,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-3-3";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.Default;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_3_3_Component = class Comp_1_x_3_3_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1340,7 +1284,7 @@ Comp_1_x_3_3_Component.ctorParameters = () => [];
 Comp_1_x_3_3_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1376,7 +1320,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-3-4";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.OnPush;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_3_4_Component = class Comp_1_x_3_4_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1386,7 +1329,7 @@ Comp_1_x_3_4_Component.ctorParameters = () => [];
 Comp_1_x_3_4_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1471,7 +1414,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-4-1";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.Default;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_4_1_Component = class Comp_1_x_4_1_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1481,7 +1423,7 @@ Comp_1_x_4_1_Component.ctorParameters = () => [];
 Comp_1_x_4_1_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1517,7 +1459,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-4-2";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.OnPush;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_4_2_Component = class Comp_1_x_4_2_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1527,7 +1468,7 @@ Comp_1_x_4_2_Component.ctorParameters = () => [];
 Comp_1_x_4_2_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1563,7 +1504,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-4-3";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.Default;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_4_3_Component = class Comp_1_x_4_3_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1573,7 +1513,7 @@ Comp_1_x_4_3_Component.ctorParameters = () => [];
 Comp_1_x_4_3_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1609,7 +1549,6 @@ __webpack_require__.r(__webpack_exports__);
 const NAME = "comp-1-x-4-4";
 const LEVEL = 4;
 const CD_STRATEGY = _angular_core__WEBPACK_IMPORTED_MODULE_4__.ChangeDetectionStrategy.OnPush;
-const CHILD_TEMPLATE = ``;
 let Comp_1_x_4_4_Component = class Comp_1_x_4_4_Component extends _abstract_change_detection_component__WEBPACK_IMPORTED_MODULE_1__.AbstractChangeDetectionComponent {
     constructor() {
         super(NAME, LEVEL, CD_STRATEGY);
@@ -1619,7 +1558,7 @@ Comp_1_x_4_4_Component.ctorParameters = () => [];
 Comp_1_x_4_4_Component = (0,tslib__WEBPACK_IMPORTED_MODULE_5__.__decorate)([
     (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Component)({
         selector: `app-${NAME}`,
-        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(CHILD_TEMPLATE),
+        template: (0,_change_detection_component_template__WEBPACK_IMPORTED_MODULE_2__.template)(),
         providers: [_color_service__WEBPACK_IMPORTED_MODULE_3__.ColorService],
         changeDetection: CD_STRATEGY,
         styles: [_change_detection_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_0__]
@@ -1755,12 +1694,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "DelayedScheduler": () => (/* binding */ DelayedScheduler)
 /* harmony export */ });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 3184);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! rxjs */ 228);
 
-/**
- * Executes the scheduled functions in sequence with a specific delay.
- */
-class DelayedScheduler {
+
+
+let DelayedScheduler = class DelayedScheduler {
     constructor(_zone) {
         this._zone = _zone;
         this._queue = [];
@@ -1776,7 +1716,8 @@ class DelayedScheduler {
         return this._done$.asObservable();
     }
     onTick() {
-        this._queue.shift()();
+        var _a;
+        (_a = this._queue.shift()) === null || _a === void 0 ? void 0 : _a();
         if (this._queue.length > 0) {
             this.scheduleInternal(DelayedScheduler.DELAY);
         }
@@ -1789,8 +1730,15 @@ class DelayedScheduler {
             setTimeout(this.onTick.bind(this), millis);
         });
     }
-}
+};
 DelayedScheduler.DELAY = 75;
+DelayedScheduler.ctorParameters = () => [
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__.NgZone }
+];
+DelayedScheduler = (0,tslib__WEBPACK_IMPORTED_MODULE_2__.__decorate)([
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.Injectable)({ providedIn: "root" })
+], DelayedScheduler);
+
 
 
 /***/ }),
@@ -1820,12 +1768,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 let DirtyCheckColoringService = class DirtyCheckColoringService {
-    constructor(_zone) {
+    constructor(_zone, _delayedScheduler) {
         this._zone = _zone;
+        this._delayedScheduler = _delayedScheduler;
         this._clearColoring$ = new rxjs__WEBPACK_IMPORTED_MODULE_1__.Subject();
         this._autoClearColoring = true;
         this._busy$ = new rxjs__WEBPACK_IMPORTED_MODULE_2__.BehaviorSubject(false);
-        this._delayedScheduler = new _delayed_scheduler_service__WEBPACK_IMPORTED_MODULE_0__.DelayedScheduler(_zone);
+    }
+    get isAutoClearColoring() {
+        return this._autoClearColoring;
     }
     clearColoring() {
         this._clearColoring$.next();
@@ -1836,19 +1787,17 @@ let DirtyCheckColoringService = class DirtyCheckColoringService {
             this.clearColoring();
         }
     }
-    isAutoClearColoring() {
-        return this._autoClearColoring;
-    }
     colorDirtyCheck(elementRef) {
         this._busy$.next(true);
         this._zone.runOutsideAngular(() => {
             const element = elementRef.nativeElement;
-            const cssClass = 'dirty-check';
+            const cssClass = "dirty-check";
             this._delayedScheduler.schedule(() => {
                 element.classList.add(cssClass);
             });
             if (this._autoClearColoring) {
-                this._delayedScheduler.done$.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.take)(1), // subscribe once
+                this._delayedScheduler.done$
+                    .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.take)(1), // subscribe once
                 (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.delay)(1000) // clear after 1s
                 )
                     .subscribe(() => {
@@ -1857,7 +1806,8 @@ let DirtyCheckColoringService = class DirtyCheckColoringService {
                 });
             }
             else {
-                this._delayedScheduler.done$.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.take)(1), // subscribe once
+                this._delayedScheduler.done$
+                    .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.take)(1), // subscribe once
                 (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.delayWhen)(() => this._clearColoring$))
                     .subscribe(() => {
                     element.classList.remove(cssClass);
@@ -1871,10 +1821,11 @@ let DirtyCheckColoringService = class DirtyCheckColoringService {
     }
 };
 DirtyCheckColoringService.ctorParameters = () => [
-    { type: _angular_core__WEBPACK_IMPORTED_MODULE_7__.NgZone }
+    { type: _angular_core__WEBPACK_IMPORTED_MODULE_7__.NgZone },
+    { type: _delayed_scheduler_service__WEBPACK_IMPORTED_MODULE_0__.DelayedScheduler }
 ];
 DirtyCheckColoringService = (0,tslib__WEBPACK_IMPORTED_MODULE_8__.__decorate)([
-    (0,_angular_core__WEBPACK_IMPORTED_MODULE_7__.Injectable)()
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_7__.Injectable)({ providedIn: "root" })
 ], DirtyCheckColoringService);
 
 
@@ -1903,14 +1854,14 @@ let ExpandCollapseService = class ExpandCollapseService {
         this._contentChildren$ = new rxjs__WEBPACK_IMPORTED_MODULE_0__.BehaviorSubject(State.Collapse);
     }
     toggleContentChildren() {
-        this._contentChildren$.next((this._contentChildren$.getValue() === State.Expand) ? State.Collapse : State.Expand);
+        this._contentChildren$.next(this._contentChildren$.getValue() === State.Expand ? State.Collapse : State.Expand);
     }
     get contentChildren$() {
         return this._contentChildren$.asObservable();
     }
 };
 ExpandCollapseService = (0,tslib__WEBPACK_IMPORTED_MODULE_1__.__decorate)([
-    (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.Injectable)()
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.Injectable)({ providedIn: "root" })
 ], ExpandCollapseService);
 
 var State;
@@ -1933,6 +1884,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "NumberHolder": () => (/* binding */ NumberHolder)
 /* harmony export */ });
 class NumberHolder {
+    constructor(value) {
+        this.value = value;
+    }
 }
 
 
