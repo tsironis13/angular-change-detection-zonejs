@@ -1,20 +1,16 @@
-import { NgZone } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import { Injectable, NgZone } from "@angular/core";
+import { Observable, Subject } from "rxjs";
 
 export type Fn = () => void;
 
-/**
- * Executes the scheduled functions in sequence with a specific delay.
- */
+@Injectable({ providedIn: "root" })
 export class DelayedScheduler {
-
   private static readonly DELAY = 75;
 
   private _queue: Fn[] = [];
   private _done$ = new Subject<void>();
 
-  constructor(private _zone: NgZone) {
-  }
+  constructor(private _zone: NgZone) {}
 
   public schedule(fn: Fn): void {
     this._queue.push(fn);
@@ -28,7 +24,7 @@ export class DelayedScheduler {
   }
 
   private onTick(): void {
-    this._queue.shift()();
+    this._queue.shift()?.();
     if (this._queue.length > 0) {
       this.scheduleInternal(DelayedScheduler.DELAY);
     } else {

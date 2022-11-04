@@ -1,27 +1,24 @@
-import { ElementRef, Injectable, NgZone } from '@angular/core';
-
-import { DirtyCheckColoringService } from './dirty-check-coloring.service';
+import { ElementRef, Injectable, NgZone } from "@angular/core";
+import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
 
 @Injectable()
 export class ColorService {
+  private ngDoCheckHandle?: number;
+  private ngOnChangesHandle?: number;
 
-  private ngDoCheckHandle: any;
-  private ngOnChangesHandle: any;
+  constructor(private _zone: NgZone, private _dirtyCheckColoringService: DirtyCheckColoringService) {}
 
-  constructor(private _zone: NgZone, private _dirtyCheckColoringService: DirtyCheckColoringService) {
-  }
-
-  public colorNgDoCheck(elementRef: ElementRef): void {
+  public colorNgDoCheck(elementRef: ElementRef<HTMLElement>): void {
     this._zone.runOutsideAngular(() => {
       clearTimeout(this.ngDoCheckHandle);
-      this.ngDoCheckHandle = this.blink(elementRef.nativeElement as HTMLElement, 'ng-do-check');
+      this.ngDoCheckHandle = this.blink(elementRef.nativeElement, "ng-do-check");
     });
   }
 
-  public colorNgOnChanges(elementRef: ElementRef): void {
+  public colorNgOnChanges(elementRef: ElementRef<HTMLElement>): void {
     this._zone.runOutsideAngular(() => {
       clearTimeout(this.ngOnChangesHandle);
-      this.ngOnChangesHandle = this.blink(elementRef.nativeElement as HTMLElement, 'ng-on-changes');
+      this.ngOnChangesHandle = this.blink(elementRef.nativeElement, "ng-on-changes");
     });
   }
 
@@ -31,22 +28,20 @@ export class ColorService {
     });
   }
 
-  public colorChangeDetectorDetached(hostRef: ElementRef): void {
+  public colorChangeDetectorDetached(hostRef: ElementRef<HTMLElement>): void {
     this._zone.runOutsideAngular(() => {
-      const host = hostRef.nativeElement as HTMLElement;
-      host.classList.add('cd-detached');
+      hostRef.nativeElement.classList.add("cd-detached");
     });
   }
 
-  public colorChangeDetectorAttached(hostRef: ElementRef): void {
+  public colorChangeDetectorAttached(hostRef: ElementRef<HTMLElement>): void {
     this._zone.runOutsideAngular(() => {
-      const host = hostRef.nativeElement as HTMLElement;
-      host.classList.remove('cd-detached');
+      hostRef.nativeElement.classList.remove("cd-detached");
     });
   }
 
-  private blink(element: HTMLElement, cssClass: string): any {
+  private blink(element: HTMLElement, cssClass: string): number {
     element.classList.add(cssClass);
-    return setTimeout(() => element.classList.remove(cssClass), 1500);
+    return window.setTimeout(() => element.classList.remove(cssClass), 1500);
   }
 }

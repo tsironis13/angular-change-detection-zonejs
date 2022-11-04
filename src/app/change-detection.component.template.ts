@@ -1,4 +1,4 @@
-export function template(children: string): string {
+export function template(children: string = ""): string {
   return `
         {{touch}}
         <button class="toggle-visibility" #toggle_visiblity>-</button>

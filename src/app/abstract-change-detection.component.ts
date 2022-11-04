@@ -14,85 +14,74 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { fromEvent, Observable, Subject, timer } from "rxjs";
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  takeUntil,
-  tap,
-} from "rxjs/operators";
+import { fromEvent, merge, Observable, Subject, timer } from "rxjs";
+import { distinctUntilChanged, filter, map, takeUntil, tap } from "rxjs/operators";
 import { ColorService } from "./color.service";
 import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
 import { ExpandCollapseService, State } from "./expand-collapse.service";
 import { NumberHolder } from "./number-holder";
 
 @Directive()
-export abstract class AbstractChangeDetectionComponent
-  implements AfterViewInit, OnChanges, DoCheck, OnDestroy
-{
+export abstract class AbstractChangeDetectionComponent implements AfterViewInit, OnChanges, DoCheck, OnDestroy {
   private _destroy$ = new Subject<void>();
   private _destroyInputObservable$ = new Subject<void>();
   private _expandCollapseState = State.Expand;
   private _childType = ChildType.ViewChild;
 
   @ViewChild("component", { static: true })
-  private _componentField: ElementRef;
+  private _componentField!: ElementRef;
 
   @ViewChild("mfc_button", { static: true }) // mark for check
-  private _mfcButton: ElementRef;
+  private _mfcButton!: ElementRef;
 
   @ViewChild("dc_button", { static: true }) // detect changes
-  private _dcButton: ElementRef;
+  private _dcButton!: ElementRef;
 
   @ViewChild("detach_button", { static: true }) // detach change detector
-  private _detachButton: ElementRef;
+  private _detachButton!: ElementRef;
 
   @ViewChild("attach_button", { static: true }) // attach change detector
-  private _attachButton: ElementRef;
+  private _attachButton!: ElementRef;
 
   @ViewChild("click_button", { static: true }) // attach change detector
-  private _clickButton: ElementRef;
+  private _clickButton!: ElementRef;
 
   @ViewChild("toggle_visiblity", { static: true })
-  private _toggleVisiblity: ElementRef;
+  private _toggleVisiblity!: ElementRef;
 
   @ViewChild("cd_state_box", { static: true })
-  private _cdStateBox: ElementRef;
+  private _cdStateBox!: ElementRef;
 
   @ViewChild("ng_do_check_box", { static: true })
-  private _ngDoCheckBox: ElementRef;
+  private _ngDoCheckBox!: ElementRef;
 
   @ViewChild("ng_on_changes_box", { static: true })
-  private _ngOnChangesBox: ElementRef;
+  private _ngOnChangesBox!: ElementRef;
 
   @ViewChild("ng_marked", { static: true })
-  private _ngMarked: ElementRef;
+  private _ngMarked!: ElementRef;
 
   @Input()
-  public inputByRef: NumberHolder;
+  public inputByRef!: NumberHolder;
 
   @Input()
-  public inputByVal: number;
+  public inputByVal!: number;
 
   @Input()
-  public inputObservable: Observable<number>;
+  public inputObservable!: Observable<number>;
 
   @Input()
   public set contentChild(contentChild: boolean) {
-    this._childType = contentChild
-      ? ChildType.ContentChild
-      : ChildType.ViewChild;
+    this._childType = contentChild ? ChildType.ContentChild : ChildType.ViewChild;
   }
 
   @HostBinding("attr.class")
   public get hostClass(): string {
-    const childType =
-      this._childType === ChildType.ViewChild ? "view-child" : "content-child";
+    const childType = this._childType === ChildType.ViewChild ? "view-child" : "content-child";
     return `${this.cdStrategyName} ${childType} level-${this._level}`;
   }
 
-  public inputObservableValue: number;
+  public inputObservableValue!: number;
   public cdStrategyName: string;
   public markedAsDirty: boolean = false;
 
@@ -103,11 +92,7 @@ export abstract class AbstractChangeDetectionComponent
   private _cd = inject(ChangeDetectorRef);
   private _zone = inject(NgZone);
 
-  constructor(
-    public name: string,
-    private _level: number,
-    cdStrategy: ChangeDetectionStrategy
-  ) {
+  constructor(public name: string, private _level: number, cdStrategy: ChangeDetectionStrategy) {
     this.cdStrategyName = resolveChangeDetectionStrategyName(cdStrategy);
   }
 
@@ -123,9 +108,7 @@ export abstract class AbstractChangeDetectionComponent
         )
         .subscribe((isDirty) => {
           this.markedAsDirty = isDirty;
-          this._ngMarked.nativeElement.style.display = isDirty
-            ? "inline"
-            : "none";
+          this._ngMarked.nativeElement.style.display = isDirty ? "inline" : "none";
         });
 
       // Detect Changes manually
@@ -134,7 +117,7 @@ export abstract class AbstractChangeDetectionComponent
           takeUntil(this._destroy$),
           tap(() => this._dirtyCheckColoringService.clearColoring())
         )
-        .subscribe((event) => {
+        .subscribe(() => {
           console.log(`ChangeDetectorRef.detectChanges() for ${this.name}`);
           this._cd.detectChanges();
         });
@@ -145,7 +128,7 @@ export abstract class AbstractChangeDetectionComponent
           takeUntil(this._destroy$),
           tap(() => this._dirtyCheckColoringService.clearColoring())
         )
-        .subscribe((event) => {
+        .subscribe(() => {
           console.log(`ChangeDetectorRef.markForCheck() for ${this.name}`);
           this._cd.markForCheck();
         });
@@ -156,7 +139,7 @@ export abstract class AbstractChangeDetectionComponent
           takeUntil(this._destroy$),
           tap(() => this._dirtyCheckColoringService.clearColoring())
         )
-        .subscribe((event) => {
+        .subscribe(() => {
           console.log(`ChangeDetectorRef.detach() for ${this.name}`);
           this._cd.detach();
           this._colorService.colorChangeDetectorDetached(this._cdStateBox);
@@ -170,7 +153,7 @@ export abstract class AbstractChangeDetectionComponent
           takeUntil(this._destroy$),
           tap(() => this._dirtyCheckColoringService.clearColoring())
         )
-        .subscribe((event) => {
+        .subscribe(() => {
           console.log(`ChangeDetectorRef.reattach() for ${this.name}`);
           this._cd.reattach();
           this._colorService.colorChangeDetectorAttached(this._cdStateBox);
@@ -181,28 +164,23 @@ export abstract class AbstractChangeDetectionComponent
       // Toggle visibility
       fromEvent(this._toggleVisiblity.nativeElement, "click")
         .pipe(takeUntil(this._destroy$))
-        .subscribe((event) => {
-          const toggledState =
-            this._expandCollapseState === State.Expand
-              ? State.Collapse
-              : State.Expand;
+        .subscribe(() => {
+          const toggledState = this._expandCollapseState === State.Expand ? State.Collapse : State.Expand;
           this.setExpandCollapseState(toggledState);
         });
 
-      this._dirtyCheckColoringService.busy$
-        .pipe(takeUntil(this._destroy$))
-        .subscribe((busy) => {
-          this._dcButton.nativeElement.disabled = busy;
-          this._mfcButton.nativeElement.disabled = busy;
-          this._attachButton.nativeElement.disabled = busy;
-          this._detachButton.nativeElement.disabled = busy;
-          this._clickButton.nativeElement.disabled = busy;
-        });
+      this._dirtyCheckColoringService.busy$.pipe(takeUntil(this._destroy$)).subscribe((busy) => {
+        this._dcButton.nativeElement.disabled = busy;
+        this._mfcButton.nativeElement.disabled = busy;
+        this._attachButton.nativeElement.disabled = busy;
+        this._detachButton.nativeElement.disabled = busy;
+        this._clickButton.nativeElement.disabled = busy;
+      });
 
       this._expandCollapseService.contentChildren$
         .pipe(
           takeUntil(this._destroy$),
-          filter((_) => this._childType === ChildType.ContentChild)
+          filter(() => this._childType === ChildType.ContentChild)
         )
         .subscribe((state) => this.setExpandCollapseState(state));
     });
@@ -212,10 +190,7 @@ export abstract class AbstractChangeDetectionComponent
     if (changes.inputObservable) {
       this._destroyInputObservable$.next();
       this.inputObservable
-        .pipe(
-          takeUntil(this._destroy$),
-          takeUntil(this._destroyInputObservable$)
-        )
+        .pipe(takeUntil(merge(this._destroy$, this._destroyInputObservable$)))
         .subscribe((value) => (this.inputObservableValue = value));
     }
     this._colorService.colorNgOnChanges(this._ngOnChangesBox);
@@ -227,11 +202,6 @@ export abstract class AbstractChangeDetectionComponent
 
   public ngOnDestroy(): void {
     this._destroy$.complete();
-  }
-
-  public get touch(): string {
-    this._colorService.colorDirtyCheck(this._hostRef);
-    return null;
   }
 
   public onClick(): void {
@@ -250,22 +220,13 @@ export abstract class AbstractChangeDetectionComponent
   }
 }
 
-function resolveChangeDetectionStrategyName(strategy: any): string {
-  for (const name in ChangeDetectionStrategy) {
-    if (
-      ChangeDetectionStrategy[name] === strategy &&
-      ChangeDetectionStrategy.hasOwnProperty(name)
-    ) {
-      return name;
-    }
-  }
-
-  return undefined;
-}
-
 enum ChildType {
   ViewChild,
   ContentChild,
+}
+
+function resolveChangeDetectionStrategyName(strategy: ChangeDetectionStrategy): string {
+  return ChangeDetectionStrategy[strategy];
 }
 
 function isDirty(cdRef: ChangeDetectorRef): boolean {

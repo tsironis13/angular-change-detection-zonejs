@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, Observable } from "rxjs";
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class ExpandCollapseService {
-
   private _contentChildren$ = new BehaviorSubject<State>(State.Collapse);
 
   public toggleContentChildren(): void {
-    this._contentChildren$.next((this._contentChildren$.getValue() === State.Expand) ? State.Collapse : State.Expand);
+    this._contentChildren$.next(this._contentChildren$.getValue() === State.Expand ? State.Collapse : State.Expand);
   }
 
   public get contentChildren$(): Observable<State> {
@@ -16,5 +15,6 @@ export class ExpandCollapseService {
 }
 
 export enum State {
-  Expand, Collapse
+  Expand,
+  Collapse,
 }

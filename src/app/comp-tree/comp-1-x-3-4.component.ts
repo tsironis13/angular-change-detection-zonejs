@@ -6,11 +6,10 @@ import { ColorService } from "../color.service";
 const NAME = "comp-1-x-3-4";
 const LEVEL = 4;
 const CD_STRATEGY = ChangeDetectionStrategy.OnPush;
-const CHILD_TEMPLATE = ``;
 
 @Component({
   selector: `app-${NAME}`,
-  template: template(CHILD_TEMPLATE),
+  template: template(),
   styleUrls: ["./../change-detection.component.scss"],
   providers: [ColorService],
   changeDetection: CD_STRATEGY,

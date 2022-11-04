@@ -1,3 +1,3 @@
 export class NumberHolder {
-  public value: number;
+  constructor(public value?: number) {}
 }
