@@ -13,7 +13,7 @@
     "sourceMap": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "es2015",
+    "target": "esnext",
     "typeRoots": [
       "node_modules/@types"
     ],
