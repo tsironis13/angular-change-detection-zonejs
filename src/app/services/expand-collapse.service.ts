@@ -9,6 +9,10 @@ export class ExpandCollapseService {
     this._contentChildren$.next(this._contentChildren$.getValue() === State.Expand ? State.Collapse : State.Expand);
   }
 
+  public collapseContentChildren(): void {
+    this._contentChildren$.next(State.Collapse);
+  }
+
   public get contentChildren$(): Observable<State> {
     return this._contentChildren$.asObservable();
   }

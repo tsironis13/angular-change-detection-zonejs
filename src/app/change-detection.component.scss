@@ -1,6 +1,6 @@
-$collapse-button-size: 15px;
-
 :host {
+  --collapse-button-size: 15px;
+
   position: relative; // anchor
   background-color: white;
   display: inline-block;
@@ -9,16 +9,16 @@ $collapse-button-size: 15px;
   padding: 5px;
   text-align: center;
   border-radius: 3px;
-  min-width: $collapse-button-size;
-  min-height: $collapse-button-size;
+  min-width: var(--collapse-button-size);
+  min-height: var(--collapse-button-size);
 
   > button.toggle-visibility {
     z-index: 1;
     position: absolute;
     left: 0;
     top: 0;
-    width: $collapse-button-size;
-    height: $collapse-button-size;
+    width: var(--collapse-button-size);
+    height: var(--collapse-button-size);
     border: none;
     color: black;
     background-color: transparent;
@@ -83,15 +83,27 @@ $collapse-button-size: 15px;
 
   > div.component {
     > div.state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+
       > span {
         display: inline-block;
         margin: 2px 0;
         padding: 2px 3px;
-        border-radius: 3px;
         border: 1px solid;
         font-size: 10px;
         color: black;
         background-color: white;
+        &:first-child {
+          border-top-left-radius: 3px;
+          border-bottom-left-radius: 3px;
+        }
+        &:last-child {
+          border-top-right-radius: 3px;
+          border-bottom-right-radius: 3px;
+        }
       }
 
       > span.strategy-box {
@@ -179,9 +191,26 @@ $collapse-button-size: 15px;
 
     > div.children {
       display: flex;
-      flex-wrap: nowrap;
+      // flex-wrap: wrap;
       flex-direction: row;
       justify-content: center;
+    }
+  }
+
+  &.level-0 > .component > .children {
+    flex-direction: column !important;
+  }
+
+  .attach-toggle {
+    &:not(:checked) {
+      ~ .attach {
+        display: none;
+      }
+    }
+    &:checked {
+      ~ .detach {
+        display: none;
+      }
     }
   }
 }

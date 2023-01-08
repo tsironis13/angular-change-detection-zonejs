@@ -47,6 +47,10 @@
         padding: 5px;
       }
     }
+
+    & > default-child {
+      width: calc(100% - 40px);
+    }
   }
 
   section {
@@ -62,4 +66,21 @@
       font-weight: bold;
     }
   }
+}
+
+.mat-toolbar {
+  min-height: 64px;
+
+  .example-spacer {
+    flex: 1 1 auto;
+  }
+}
+
+.mat-drawer {
+  min-width: 320px;
+}
+
+.mat-drawer-content {
+  display: flex;
+  flex-direction: column;
 }

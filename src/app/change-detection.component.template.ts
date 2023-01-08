@@ -1,7 +1,7 @@
-export function template(children: string = ""): string {
+export function template(children = ''): string {
   return `
         {{touch}}
-        <button class="toggle-visibility" #toggle_visiblity>-</button>
+        <button class="toggle-visibility" #toggle_visiblity [unpatch] (click)="toggleVisibility()">-</button>
         <div #component class="component">
           <div class="state">
             <span class="strategy-box {{cdStrategyName}}">{{cdStrategyName}}</span>
@@ -21,8 +21,10 @@ export function template(children: string = ""): string {
           <div class="control">
             <button #dc_button title="Detect changes">DC</button>
             <button #mfc_button title="Mark for check (only applicable for 'OnPush' strategy; does not trigger change detection)">MFC</button>
-            <button #detach_button title="Detaches ChangeDetector">Detach</button>
-            <button #attach_button title="Attaches ChangeDetector">Attach</button>
+
+            <input type="checkbox" #attach_checkbox hidden class="attach-toggle" />
+            <button class="detach" [unpatch] (click)="onDetachClick()" title="Detaches ChangeDetector">Detach</button>
+            <button class="attach" [unpatch] (click)="onAttachClick()" title="Attaches ChangeDetector">Attach</button>
             <button #click_button (click)="onClick()" title="Simple click action from template (ng binding)">Click</button>
           </div>
           <div class="children">

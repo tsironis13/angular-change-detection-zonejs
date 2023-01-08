@@ -17,7 +17,11 @@
       },
       "extends": [
         "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates"
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@rx-angular/recommended",
+        "prettier"
       ],
       "rules": {
         "comma-dangle": [
@@ -37,7 +41,6 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "app",
             "style": "camelCase"
           }
         ],
@@ -49,7 +52,10 @@
           }
         ],
         "@angular-eslint/no-conflicting-lifecycle": "off",
-        "no-constant-binary-expression": "error"
+        "no-constant-binary-expression": "error",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@rx-angular/no-zone-critical-browser-apis": "error",
+        "@rx-angular/no-explicit-change-detection-apis": "off"
       }
     },
     {
