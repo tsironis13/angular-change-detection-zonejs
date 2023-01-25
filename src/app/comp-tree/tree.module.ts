@@ -24,9 +24,11 @@ import { Comp_1_x_4_3_Component } from './comp-1-x-4-3.component';
 import { Comp_1_x_4_4_Component } from './comp-1-x-4-4.component';
 import { Comp_1_x_4_Component } from './comp-1-x-4.component';
 import { Comp_1_Component } from './comp-1.component';
+import { TreeComponent } from './tree.component';
 
 @NgModule({
   declarations: [
+    TreeComponent,
     Comp_1_Component,
     Comp_1_1_Component,
     Comp_1_2_Component,
@@ -52,6 +54,6 @@ import { Comp_1_Component } from './comp-1.component';
     Comp_1_x_4_4_Component,
   ],
   imports: [UnpatchModule, MatCardModule],
-  exports: [Comp_1_Component],
+  exports: [TreeComponent],
 })
 export class TreeModule {}

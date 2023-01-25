@@ -3,6 +3,9 @@ export function template(children = ''): string {
         {{touch}}
         <button class="toggle-visibility" #toggle_visiblity [unpatch] (click)="toggleVisibility()">-</button>
         <div #component class="component">
+          <div class="name">
+            <<{{ _childType === 'ViewChild' ? 'ViewChild' : 'ContentChild'}}>> - {{name}}
+          </div>
           <div class="state">
             <span class="strategy-box {{cdStrategyName}}">{{cdStrategyName}}</span>
             <span #cd_state_box class="cd-state-box"></span>
@@ -10,17 +13,15 @@ export function template(children = ''): string {
             <span #ng_on_changes_box class="ng-on-changes-box">ngOnChanges</span>
             <span #ng_marked style="display:none">Marked</span>
           </div>
-          <div class="name">
-            {{name}}
-          </div>
+
           <table class="input-box">
             <tr><th>input value:</th><td class="input-value">{{inputByVal}}</td></tr>
             <tr><th>object prop:</th><td class="input-value">{{inputByRef?.value}}</td></tr>
             <tr><th>observable:</th><td class="input-value">{{inputObservableValue}}</td></tr>
           </table>
           <div class="control">
-            <button #dc_button title="Detect changes">DC</button>
-            <button #mfc_button title="Mark for check (only applicable for 'OnPush' strategy; does not trigger change detection)">MFC</button>
+            <button [unpatch] (click)="onDetectChangesClick" title="Detect changes">DC</button>
+            <button [unpatch] (click)="onClickMarked()" title="Mark for check (only applicable for 'OnPush' strategy; does not trigger change detection)">MFC</button>
 
             <input type="checkbox" #attach_checkbox hidden class="attach-toggle" />
             <button class="detach" [unpatch] (click)="onDetachClick()" title="Detaches ChangeDetector">Detach</button>

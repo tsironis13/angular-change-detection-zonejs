@@ -42,12 +42,12 @@ export abstract class AbstractChangeDetectionComponent implements OnChanges, OnI
 
   @Input()
   public set contentChild(contentChild: boolean) {
-    this._childType = contentChild ? ChildType.ContentChild : ChildType.ViewChild;
+    this._childType = contentChild ? 'ContentChild' : 'ViewChild';
   }
 
   @HostBinding('attr.class')
   public get hostClass(): string {
-    const childType = this._childType === ChildType.ViewChild ? 'view-child' : 'content-child';
+    const childType = this._childType === 'ViewChild' ? 'view-child' : 'content-child';
     return `${this.cdStrategyName} ${childType} level-${this._level}`;
   }
 
@@ -65,10 +65,11 @@ export abstract class AbstractChangeDetectionComponent implements OnChanges, OnI
   protected name = inject(CMP_NAME);
 
   private _expandCollapseState = State.Expand;
-  protected _childType: ChildType = ChildType.ViewChild;
+  protected _childType: ChildType = 'ViewChild';
   private _children: Array<ComponentRef<AbstractChangeDetectionComponent>> = [];
 
   ngOnInit(): void {
+    this.inputObservable.subscribe((v) => (this.inputObservableValue = `${v}`));
     this.cdStrategyName = resolveChangeDetectionStrategyName(getStrategy(this._cd));
 
     this.dirtyService.checkForDirty$.subscribe(() => {
@@ -78,7 +79,7 @@ export abstract class AbstractChangeDetectionComponent implements OnChanges, OnI
     this._expandCollapseService.contentChildren$
       .pipe(
         takeUntil(this._destroy$),
-        filter(() => this._childType === ChildType.ContentChild)
+        filter(() => this._childType === 'ContentChild')
       )
       .subscribe((state) => this.setExpandCollapseState(state));
   }
@@ -175,10 +176,7 @@ function resolveChangeDetectionStrategyName(strategy: ChangeDetectionStrategy): 
   return ChangeDetectionStrategy[strategy];
 }
 
-export enum ChildType {
-  ViewChild,
-  ContentChild,
-}
+export type ChildType = 'ViewChild' | 'ContentChild';
 
 export const LEVEL = new InjectionToken<number>('LEVEL');
 export const CMP_NAME = new InjectionToken<string>('CMP_NAME');

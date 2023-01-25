@@ -1,12 +1,12 @@
 :host {
-  --collapse-button-size: 15px;
+  --collapse-button-size: 22px;
 
   position: relative; // anchor
   background-color: white;
   display: inline-block;
   border: 1px solid black;
   margin: 10px;
-  padding: 5px;
+  padding: 0px;
   text-align: center;
   border-radius: 3px;
   min-width: var(--collapse-button-size);
@@ -16,7 +16,7 @@
     z-index: 1;
     position: absolute;
     left: 0;
-    top: 0;
+    top: 3px;
     width: var(--collapse-button-size);
     height: var(--collapse-button-size);
     border: none;
@@ -69,16 +69,16 @@
 
   &.view-child {
     border-style: solid;
-    > div.component::before {
-      content: "<<ViewChild>>";
-    }
+    // > div.component::before {
+    //   content: "<<ViewChild>>";
+    // }
   }
 
   &.content-child {
     border-style: dashed;
-    > div.component::before {
-      content: "<<ContentChild>>";
-    }
+    // > div.component::before {
+    //   content: "<<ContentChild>>";
+    // }
   }
 
   > div.component {
@@ -90,7 +90,7 @@
 
       > span {
         display: inline-block;
-        margin: 2px 0;
+        //margin: 2px 0;
         padding: 2px 3px;
         border: 1px solid;
         font-size: 10px;
@@ -111,9 +111,7 @@
         color: white;
 
         &.Default {
-          border-color: black;
           background-color: black;
-          color: white;
         }
 
         &.OnPush {
@@ -128,7 +126,7 @@
         color: #004d1a;
         background-color: #b3ffcc;
         &::before {
-          content: "attached";
+          content: 'attached';
         }
 
         &.cd-detached {
@@ -136,7 +134,7 @@
           background-color: #cccccc;
           border-color: #000000;
           &::before {
-            content: "detached";
+            content: 'detached';
           }
         }
       }
@@ -165,9 +163,14 @@
     }
 
     > div.name {
+      font-family: monospace;
       padding: 5px 0;
       font-size: 12px;
       font-weight: bold;
+      width: 100%;
+      background-color: #bbdefb;
+      border-top-left-radius: 3px;
+      border-top-right-radius: 3px;
     }
 
     > table.input-box {
@@ -184,9 +187,11 @@
       }
     }
 
-    > div.control > button {
-      cursor: pointer;
-      font-size: 10px;
+    > div.control {
+      & > button {
+        cursor: pointer;
+        font-size: 10px;
+      }
     }
 
     > div.children {

@@ -4,37 +4,21 @@
       <mat-list>
         <mat-list-item>Pepper</mat-list-item>
         <mat-list-item>Salt</mat-list-item>
-        <mat-divider/>
+        <mat-divider />
         <mat-list-item>Paprika</mat-list-item>
       </mat-list>
     </nav>
   </mat-drawer>
   <mat-drawer-content>
-    <mat-toolbar>
-      <button
-        mat-icon-button
-        class="example-icon"
-        aria-label="Example icon-button with menu icon"
-        (click)="drawer.toggle()"
-      >
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span>Angular Change Detection</span>
-      <span class="example-spacer"></span>
-      <!-- <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-        <mat-icon>favorite</mat-icon>
-      </button>
-      <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-        <mat-icon>share</mat-icon>
-      </button> -->
-    </mat-toolbar>
+    <app-toolbar [drawer]="drawer" />
 
     <div class="control">
       <section>
         <header>Trigger global actions</header>
         <nav>
-          <button [unpatch] (click)="onTickClick()" disableWhenBusyz>AppRef.tick()</button>
+          <button mat-stroked-button [unpatch] (click)="onTickClick()" disableWhenBusyz>AppRef.tick()</button>
           <button
+            mat-stroked-button
             [unpatch]
             (click)="onTimeoutClick()"
             disableWhenBusy
@@ -42,71 +26,46 @@
           >
             setTimeout(...)
           </button>
-          <button disableWhenBusy (click)="clickNoop()" title="Click with a NoOp">Click</button>
+          <button mat-stroked-button disableWhenBusy (click)="clickNoop()" title="Click with a NoOp">Click</button>
         </nav>
       </section>
-
       <section>
         <header>Control dirty check coloring</header>
         <nav>
           <label>
-            <input [unpatch] disableWhenBusy type="checkbox" #auto_clear checked (change)="onAutoClearChange($event)" />
+            <input
+              mat-stroked-button
+              [unpatch]
+              disableWhenBusy
+              type="checkbox"
+              #auto_clear
+              checked
+              (change)="onAutoClearChange($event)"
+            />
             Clear dirty check coloring automatically
           </label>
           <span class="filler"></span>
-          <button #clear [unpatch] (click)="onClearClick()">Clear</button>
+          <button #clear mat-stroked-button [unpatch] (click)="onClearClick()">Clear</button>
         </nav>
       </section>
 
       <section>
         <header>Play with component input - current value: <span #input_value_field>n/a</span></header>
         <nav>
-          <button [unpatch] (click)="onTriggerChangeClick()" disableWhenBusy>Trigger change</button>
-          <label>
-            <input
-              type="checkbox"
-              disableWhenBusy
-              #propagate_by_value_checkbox
-              checked
-              title="Provides the new value as a new object (ref-change)"
-            />
-            change input object (ref-change)
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              disableWhenBusy
-              #propagate_by_ref_checkbox
-              checked
-              title="Provides the new value by mutating the input object (no-ref-change)"
-            />mutate input object (no ref-change)
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              disableWhenBusy
-              #propagate_by_observable_checkbox
-              checked
-              title="Publishes the new value via Observable"
-            />via Observable (no ref-change)
-          </label>
-          <label>
-            <input type="checkbox" disableWhenBusy #propagate_in_zone_checkbox checked />
-            Propagate in Angular zone
-          </label>
+          <app-trigger-change />
         </nav>
       </section>
 
       <section>
         <header>Expand or collapse ContentChildren</header>
         <nav>
-          <button #toggle_content_children [unpatch] (click)="onToggleContentChildren()"></button>
+          <app-expand-children />
         </nav>
       </section>
     </div>
 
-    <main>
-      <app-comp-1 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1>
+    <main *rxLet="foo$; strategy: 'local'">
+      <app-tree />
       <div class="explanation">
         <section>
           <header>ngDoCheck</header>
