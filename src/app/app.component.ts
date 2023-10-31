@@ -1,6 +1,16 @@
-import { AfterViewInit, ApplicationRef, Component, ElementRef, NgZone, OnDestroy, ViewChild } from "@angular/core";
-import { fromEvent, Subject } from "rxjs";
-import { map, takeUntil, tap } from "rxjs/operators";
+import {
+  AfterViewInit,
+  ApplicationRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  NgZone,
+  ViewChild,
+  inject,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { Subject, fromEvent } from "rxjs";
+import { map, tap } from "rxjs/operators";
 import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
 import { ExpandCollapseService, State } from "./expand-collapse.service";
 import { NumberHolder } from "./number-holder";
@@ -10,8 +20,8 @@ import { NumberHolder } from "./number-holder";
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
 })
-export class AppComponent implements AfterViewInit, OnDestroy {
-  private _destroy$ = new Subject<void>();
+export class AppComponent implements AfterViewInit {
+  private destroyRef = inject(DestroyRef);
 
   private value = 0;
   public inputByVal!: number;
@@ -58,7 +68,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     private _zone: NgZone,
     private _appRef: ApplicationRef,
     private _dirtyCheckColoringService: DirtyCheckColoringService,
-    private _expandCollapseService: ExpandCollapseService
+    private _expandCollapseService: ExpandCollapseService,
   ) {}
 
   public ngAfterViewInit(): void {
@@ -69,13 +79,13 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       fromEvent(this._apptickButton.nativeElement, "click")
         .pipe(
           tap(() => this._dirtyCheckColoringService.clearColoring()),
-          takeUntil(this._destroy$)
+          takeUntilDestroyed(this.destroyRef),
         )
         .subscribe(() => this._appRef.tick());
 
       // timeout
       fromEvent(this._timeoutButton.nativeElement, "click")
-        .pipe(takeUntil(this._destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
           setTimeout(() => this._zone.run(() => console.log(`setTimeout(...)`)), 3000);
         });
@@ -83,8 +93,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       // clear auto checkbox
       fromEvent(this._autoClearCheckbox.nativeElement, "change")
         .pipe(
-          takeUntil(this._destroy$),
-          map((event: Event) => event.target as HTMLInputElement)
+          takeUntilDestroyed(this.destroyRef),
+          map((event: Event) => event.target as HTMLInputElement),
         )
         .subscribe((element) => {
           this._dirtyCheckColoringService.setAutoClearColoring(element.checked);
@@ -92,7 +102,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
       // clear
       fromEvent(this._clearButton.nativeElement, "click")
-        .pipe(takeUntil(this._destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
           this._dirtyCheckColoringService.clearColoring();
         });
@@ -100,8 +110,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
       // Change input
       fromEvent(this._triggerChangeButton.nativeElement, "click")
         .pipe(
-          takeUntil(this._destroy$),
-          tap(() => this._dirtyCheckColoringService.clearColoring())
+          takeUntilDestroyed(this.destroyRef),
+          tap(() => this._dirtyCheckColoringService.clearColoring()),
         )
         .subscribe((_) => {
           if (this.isPropagateInZone()) {
@@ -113,17 +123,17 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
       // Toggle content children
       fromEvent(this._toggleContentChildren.nativeElement, "click")
-        .pipe(takeUntil(this._destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe((_) => this._expandCollapseService.toggleContentChildren());
 
       // Toggle ContentChildren
-      this._expandCollapseService.contentChildren$.pipe(takeUntil(this._destroy$)).subscribe((state) => {
+      this._expandCollapseService.contentChildren$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
         const button = this._toggleContentChildren.nativeElement;
         button.innerHTML = state === State.Expand ? "Collapse ContentChildren" : "Expand ContentChildren";
       });
 
       // Busy
-      this._dirtyCheckColoringService.busy$.pipe(takeUntil(this._destroy$)).subscribe((busy) => {
+      this._dirtyCheckColoringService.busy$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((busy) => {
         this._apptickButton.nativeElement.disabled = busy;
         this._timeoutButton.nativeElement.disabled = busy;
         this._clickButton.nativeElement.disabled = busy;
@@ -144,10 +154,6 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   public clickNoop(): void {
     console.log(`click`);
-  }
-
-  public ngOnDestroy(): void {
-    this._destroy$.complete();
   }
 
   private updateInputValue(): void {

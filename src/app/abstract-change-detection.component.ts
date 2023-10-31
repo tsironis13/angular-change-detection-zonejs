@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  DestroyRef,
   Directive,
   DoCheck,
   ElementRef,
@@ -10,11 +11,12 @@ import {
   Input,
   NgZone,
   OnChanges,
-  OnDestroy,
+  signal,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { fromEvent, merge, Observable, Subject, timer } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { fromEvent, Observable, Subject, timer } from "rxjs";
 import { distinctUntilChanged, filter, map, takeUntil, tap } from "rxjs/operators";
 import { ColorService } from "./color.service";
 import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
@@ -22,8 +24,8 @@ import { ExpandCollapseService, State } from "./expand-collapse.service";
 import { NumberHolder } from "./number-holder";
 
 @Directive()
-export abstract class AbstractChangeDetectionComponent implements AfterViewInit, OnChanges, DoCheck, OnDestroy {
-  private _destroy$ = new Subject<void>();
+export abstract class AbstractChangeDetectionComponent implements AfterViewInit, OnChanges, DoCheck {
+  private destroyRef = inject(DestroyRef);
   private _destroyInputObservable$ = new Subject<void>();
   private _expandCollapseState = State.Expand;
   private _childType = ChildType.ViewChild;
@@ -34,6 +36,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   @ViewChild("detach_button", { static: true }) private _detachButton!: ElementRef;
   @ViewChild("attach_button", { static: true }) private _attachButton!: ElementRef;
   @ViewChild("click_button", { static: true }) private _clickButton!: ElementRef;
+  @ViewChild("signal_button", { static: true }) private _signalButton!: ElementRef;
   @ViewChild("toggle_visiblity", { static: true }) private _toggleVisiblity!: ElementRef;
   @ViewChild("cd_state_box", { static: true }) private _cdStateBox!: ElementRef;
   @ViewChild("ng_do_check_box", { static: true }) private _ngDoCheckBox!: ElementRef;
@@ -67,8 +70,13 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   private _expandCollapseService = inject(ExpandCollapseService);
   private _cd = inject(ChangeDetectorRef);
   private _zone = inject(NgZone);
+  protected signal = signal(0);
 
-  constructor(public name: string, private _level: number, cdStrategy: ChangeDetectionStrategy) {
+  constructor(
+    public name: string,
+    private _level: number,
+    cdStrategy: ChangeDetectionStrategy,
+  ) {
     this.cdStrategyName = resolveChangeDetectionStrategyName(cdStrategy);
   }
 
@@ -80,7 +88,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
       timer(0, 500)
         .pipe(
           map(() => isDirty(this._cd)),
-          distinctUntilChanged()
+          distinctUntilChanged(),
         )
         .subscribe((isDirty) => {
           this.markedAsDirty = isDirty;
@@ -90,8 +98,8 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
       // Detect Changes manually
       fromEvent(this._dcButton.nativeElement, "click")
         .pipe(
-          takeUntil(this._destroy$),
-          tap(() => this._dirtyCheckColoringService.clearColoring())
+          takeUntilDestroyed(this.destroyRef),
+          tap(() => this._dirtyCheckColoringService.clearColoring()),
         )
         .subscribe(() => {
           console.log(`ChangeDetectorRef.detectChanges() for ${this.name}`);
@@ -101,8 +109,8 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
       // Mark for check
       fromEvent(this._mfcButton.nativeElement, "click")
         .pipe(
-          takeUntil(this._destroy$),
-          tap(() => this._dirtyCheckColoringService.clearColoring())
+          takeUntilDestroyed(this.destroyRef),
+          tap(() => this._dirtyCheckColoringService.clearColoring()),
         )
         .subscribe(() => {
           console.log(`ChangeDetectorRef.markForCheck() for ${this.name}`);
@@ -112,8 +120,8 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
       // Detach change detector
       fromEvent(this._detachButton.nativeElement, "click")
         .pipe(
-          takeUntil(this._destroy$),
-          tap(() => this._dirtyCheckColoringService.clearColoring())
+          takeUntilDestroyed(this.destroyRef),
+          tap(() => this._dirtyCheckColoringService.clearColoring()),
         )
         .subscribe(() => {
           console.log(`ChangeDetectorRef.detach() for ${this.name}`);
@@ -126,8 +134,8 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
       // Attach change detector
       fromEvent(this._attachButton.nativeElement, "click")
         .pipe(
-          takeUntil(this._destroy$),
-          tap(() => this._dirtyCheckColoringService.clearColoring())
+          takeUntilDestroyed(this.destroyRef),
+          tap(() => this._dirtyCheckColoringService.clearColoring()),
         )
         .subscribe(() => {
           console.log(`ChangeDetectorRef.reattach() for ${this.name}`);
@@ -136,27 +144,39 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
           this._detachButton.nativeElement.style.display = "inline"; // because outside Angular zone
           this._attachButton.nativeElement.style.display = "none";
         });
+      // Signal change
+      fromEvent(this._signalButton.nativeElement, "click")
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          tap(() => this._dirtyCheckColoringService.clearColoring()),
+        )
+        .subscribe(() => {
+          console.log("lala");
+          this.signal.update((v) => v + 1);
+          //this._zone.run(() => {});
+        });
 
       // Toggle visibility
       fromEvent(this._toggleVisiblity.nativeElement, "click")
-        .pipe(takeUntil(this._destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
           const toggledState = this._expandCollapseState === State.Expand ? State.Collapse : State.Expand;
           this.setExpandCollapseState(toggledState);
         });
 
-      this._dirtyCheckColoringService.busy$.pipe(takeUntil(this._destroy$)).subscribe((busy) => {
+      this._dirtyCheckColoringService.busy$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((busy) => {
         this._dcButton.nativeElement.disabled = busy;
         this._mfcButton.nativeElement.disabled = busy;
         this._attachButton.nativeElement.disabled = busy;
         this._detachButton.nativeElement.disabled = busy;
         this._clickButton.nativeElement.disabled = busy;
+        this._signalButton.nativeElement.disabled = busy;
       });
 
       this._expandCollapseService.contentChildren$
         .pipe(
-          takeUntil(this._destroy$),
-          filter(() => this._childType === ChildType.ContentChild)
+          takeUntilDestroyed(this.destroyRef),
+          filter(() => this._childType === ChildType.ContentChild),
         )
         .subscribe((state) => this.setExpandCollapseState(state));
     });
@@ -166,7 +186,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
     if (changes.inputObservable) {
       this._destroyInputObservable$.next();
       this.inputObservable
-        .pipe(takeUntil(merge(this._destroy$, this._destroyInputObservable$)))
+        .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this._destroyInputObservable$))
         .subscribe((value) => (this.inputObservableValue = value));
     }
     this._colorService.colorNgOnChanges(this._ngOnChangesBox);
@@ -174,10 +194,6 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
 
   public ngDoCheck(): void {
     this._colorService.colorNgDoCheck(this._ngDoCheckBox);
-  }
-
-  public ngOnDestroy(): void {
-    this._destroy$.complete();
   }
 
   public get touch(): void {

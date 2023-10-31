@@ -17,12 +17,14 @@ export function template(children: string = ""): string {
             <tr><th>input value:</th><td class="input-value">{{inputByVal}}</td></tr>
             <tr><th>object prop:</th><td class="input-value">{{inputByRef?.value}}</td></tr>
             <tr><th>observable:</th><td class="input-value">{{inputObservableValue}}</td></tr>
+            <tr><th>signal:</th><td class="input-value">{{signal()}}</td></tr>
           </table>
           <div class="control">
             <button #dc_button title="Detect changes">DC</button>
             <button #mfc_button title="Mark for check (only applicable for 'OnPush' strategy; does not trigger change detection)">MFC</button>
             <button #detach_button title="Detaches ChangeDetector">Detach</button>
             <button #attach_button title="Attaches ChangeDetector">Attach</button>
+            <button #signal_button title="signal update">Signal++</button>
             <button #click_button (click)="onClick()" title="Simple click action from template (ng binding)">Click</button>
           </div>
           <div class="children">
