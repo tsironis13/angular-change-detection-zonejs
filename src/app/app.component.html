@@ -49,13 +49,15 @@
     </nav>
   </section>
 
-  <section>
+  <!--   <section>
     <header>Expand or collapse ContentChildren</header>
     <nav>
       <button #toggle_content_children></button>
     </nav>
-  </section>
+  </section> -->
 </div>
+
+<div class="cd-warning">Remember to trigger <i>tick()</i> to fire CD</div>
 
 <main>
   <app-comp-1 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1>
@@ -105,11 +107,17 @@
 
     <section>
       <header>Credit</header>
-      <p>
-        This project is forked from
-        <a href="https://github.com/danielwiehl/edu-angular-change-detection">Daniel Wiehl's CD demo</a>. I'd like to
-        thank him for his initial work.
-      </p>
+      <article>
+        <p>
+          This project is forked from
+          <a href="https://github.com/danielwiehl/edu-angular-change-detection">Daniel Wiehl's CD demo</a>. I'd like to
+          thank him for his initial work.
+        </p>
+        <p>
+          You can find this current demo
+          <a href="https://github.com/jeanmeche/angular-change-detection">On my repo</a>.
+        </p>
+      </article>
     </section>
   </div>
 </main>

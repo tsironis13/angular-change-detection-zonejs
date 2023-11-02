@@ -31,7 +31,6 @@
             ],
             "scripts": [],
             "extractLicenses": false,
-            "sourceMap": true,
             "optimization": true,
             "namedChunks": true
           },
@@ -60,19 +59,28 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": {
+                "scripts": true,
+                "vendor": true
+              }
             }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "buildTarget": "change-detection:build"
-          },
           "configurations": {
             "production": {
               "buildTarget": "change-detection:build:production"
+            },
+            "development": {
+              "buildTarget": "change-detection:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",

@@ -15,9 +15,9 @@ export function template(children: string = ""): string {
           </div>
           <table class="input-box">
             <tr><th>input value:</th><td class="input-value">{{inputByVal}}</td></tr>
-            <tr><th>object prop:</th><td class="input-value">{{inputByRef?.value}}</td></tr>
+            <tr><th>object prop:</th><td class="input-value">{{inputByRef.value}}</td></tr>
             <tr><th>observable:</th><td class="input-value">{{inputObservableValue}}</td></tr>
-            <tr><th>signal:</th><td class="input-value">{{signal()}}</td></tr>
+            <tr><th>local signal:</th><td class="input-value">{{signal()}}</td></tr>
           </table>
           <div class="control">
             <button #dc_button title="Detect changes">DC</button>

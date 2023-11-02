@@ -1,26 +1,31 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { AbstractChangeDetectionComponent } from "../abstract-change-detection.component";
-import { template } from "../change-detection.component.template";
-import { ColorService } from "../color.service";
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 
-const NAME = "comp-1-1";
+import {AbstractChangeDetectionComponent} from '../abstract-change-detection.component';
+
+import {template} from '../change-detection.component.template';
+import {ColorService} from '../color.service';
+
+const NAME = 'comp-1-1';
 const LEVEL = 2;
 const CD_STRATEGY = ChangeDetectionStrategy.Default;
 const CHILD_TEMPLATE = `
   <app-comp-1-x-1 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
-    <app-comp-1-x-1-3 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-1-3>
+   <!-- <app-comp-1-x-1-3 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-1-3>
     <app-comp-1-x-1-4 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-1-4>
+    -->
   </app-comp-1-x-1>
   <app-comp-1-x-2 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
+    <!--
     <app-comp-1-x-2-3 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-2-3>
     <app-comp-1-x-2-4 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-2-4>
+    -->
   </app-comp-1-x-2>
 `;
 
 @Component({
   selector: `app-${NAME}`,
   template: template(CHILD_TEMPLATE),
-  styleUrls: ["./../change-detection.component.scss"],
+  styleUrls: ['./../change-detection.component.scss'],
   providers: [ColorService],
   changeDetection: CD_STRATEGY,
 })

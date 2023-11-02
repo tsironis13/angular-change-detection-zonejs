@@ -12,8 +12,8 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { Subject, fromEvent } from "rxjs";
 import { map, tap } from "rxjs/operators";
 import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
-import { ExpandCollapseService, State } from "./expand-collapse.service";
 import { NumberHolder } from "./number-holder";
+import { WarningService } from "./warning.service";
 
 @Component({
   selector: "app-root",
@@ -68,7 +68,7 @@ export class AppComponent implements AfterViewInit {
     private _zone: NgZone,
     private _appRef: ApplicationRef,
     private _dirtyCheckColoringService: DirtyCheckColoringService,
-    private _expandCollapseService: ExpandCollapseService,
+    private _warningService: WarningService,
   ) {}
 
   public ngAfterViewInit(): void {
@@ -81,13 +81,19 @@ export class AppComponent implements AfterViewInit {
           tap(() => this._dirtyCheckColoringService.clearColoring()),
           takeUntilDestroyed(this.destroyRef),
         )
-        .subscribe(() => this._appRef.tick());
+        .subscribe(() => {
+          this._appRef.tick();
+          this._warningService.hideWarning();
+        });
 
       // timeout
       fromEvent(this._timeoutButton.nativeElement, "click")
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
-          setTimeout(() => this._zone.run(() => console.log(`setTimeout(...)`)), 3000);
+          setTimeout(() => {
+            this._warningService.hideWarning();
+            this._zone.run(() => console.log(`setTimeout(...)`));
+          }, 3000);
         });
 
       // clear auto checkbox
@@ -104,6 +110,7 @@ export class AppComponent implements AfterViewInit {
       fromEvent(this._clearButton.nativeElement, "click")
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(() => {
+          this._warningService.hideWarning();
           this._dirtyCheckColoringService.clearColoring();
         });
 
@@ -122,15 +129,15 @@ export class AppComponent implements AfterViewInit {
         });
 
       // Toggle content children
-      fromEvent(this._toggleContentChildren.nativeElement, "click")
+      /*       fromEvent(this._toggleContentChildren.nativeElement, "click")
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((_) => this._expandCollapseService.toggleContentChildren());
+        .subscribe((_) => this._expandCollapseService.toggleContentChildren()); */
 
       // Toggle ContentChildren
-      this._expandCollapseService.contentChildren$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
+      /*       this._expandCollapseService.contentChildren$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
         const button = this._toggleContentChildren.nativeElement;
         button.innerHTML = state === State.Expand ? "Collapse ContentChildren" : "Expand ContentChildren";
-      });
+      }); */
 
       // Busy
       this._dirtyCheckColoringService.busy$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((busy) => {

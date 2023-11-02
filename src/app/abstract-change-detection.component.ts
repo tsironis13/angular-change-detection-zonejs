@@ -22,6 +22,7 @@ import { ColorService } from "./color.service";
 import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
 import { ExpandCollapseService, State } from "./expand-collapse.service";
 import { NumberHolder } from "./number-holder";
+import { WarningService } from "./warning.service";
 
 @Directive()
 export abstract class AbstractChangeDetectionComponent implements AfterViewInit, OnChanges, DoCheck {
@@ -70,6 +71,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   private _expandCollapseService = inject(ExpandCollapseService);
   private _cd = inject(ChangeDetectorRef);
   private _zone = inject(NgZone);
+  private _warningService = inject(WarningService);
   protected signal = signal(0);
 
   constructor(
@@ -115,6 +117,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
         .subscribe(() => {
           console.log(`ChangeDetectorRef.markForCheck() for ${this.name}`);
           this._cd.markForCheck();
+          this._warningService.showWarning();
         });
 
       // Detach change detector
@@ -153,6 +156,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
         .subscribe(() => {
           console.log("lala");
           this.signal.update((v) => v + 1);
+          this._warningService.showWarning();
           //this._zone.run(() => {});
         });
 
@@ -201,6 +205,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   }
 
   public onClick(): void {
+    this._warningService.hideWarning();
     console.log(`Click for ${this.name}`);
   }
 
