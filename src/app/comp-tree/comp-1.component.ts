@@ -10,29 +10,29 @@ const LEVEL = 1;
 const CD_STRATEGY = ChangeDetectionStrategy.Default;
 const CHILD_TEMPLATE = `
   <app-comp-1-1 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
-  <!--     <app-comp-1-x-3 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
-        <app-comp-1-x-3-3 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-3-3>
-        <app-comp-1-x-3-4 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-3-4>
+  <!--     <app-comp-1-x-3 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
+        <app-comp-1-x-3-3 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-3-3>
+        <app-comp-1-x-3-4 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-3-4>
     
      </app-comp-1-x-3>
-     <app-comp-1-x-4 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
-      <app-comp-1-x-4-3 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-4-3>
-        <app-comp-1-x-4-4 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-4-4> 
+     <app-comp-1-x-4 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
+      <app-comp-1-x-4-3 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-4-3>
+        <app-comp-1-x-4-4 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-4-4> 
         
      </app-comp-1-x-4>-->
   </app-comp-1-1>
   <app-comp-1-2 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
   <!--
 
-     <app-comp-1-x-3 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
-        <app-comp-1-x-3-3 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-3-3>
-        <app-comp-1-x-3-4 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-3-4>
+     <app-comp-1-x-3 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
+        <app-comp-1-x-3-3 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-3-3>
+        <app-comp-1-x-3-4 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-3-4>
         
       </app-comp-1-x-3>
-     <app-comp-1-x-4 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
+     <app-comp-1-x-4 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
      
-        <app-comp-1-x-4-3 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-4-3>
-        <app-comp-1-x-4-4 [contentChild]="true" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-4-4>
+        <app-comp-1-x-4-3 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-4-3>
+        <app-comp-1-x-4-4 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-4-4>
       </app-comp-1-x-4>
       -->
 

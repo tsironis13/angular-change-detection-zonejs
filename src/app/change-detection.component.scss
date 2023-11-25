@@ -67,20 +67,6 @@ $collapse-button-size: 15px;
     font-size: 10px;
   }
 
-  &.view-child {
-    border-style: solid;
-    > div.component::before {
-      content: "<<ViewChild>>";
-    }
-  }
-
-  &.content-child {
-    border-style: dashed;
-    > div.component::before {
-      content: "<<ContentChild>>";
-    }
-  }
-
   > div.component {
     > div.state {
       > span {
@@ -175,6 +161,9 @@ $collapse-button-size: 15px;
     > div.control > button {
       cursor: pointer;
       font-size: 10px;
+      &:not([disabled]):hover {
+        background-color: #e6e6e6;
+      }
     }
 
     > div.children {
