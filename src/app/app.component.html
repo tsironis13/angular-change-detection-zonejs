@@ -62,28 +62,6 @@
 
   <div class="explanation">
     <section>
-      <header>ngDoCheck</header>
-      <article>
-        <p>Lifecycle hook that is called when Angular dirty checks a directive.</p>
-        <br />
-        'ngDoCheck' gets called to check the changes in the directives in addition to the default algorithm. The default
-        change detection algorithm looks for differences by comparing bound-property values by reference across change
-        detection runs.<br />
-        The ngDoCheck lifecycle hook is triggered even if the the component uses OnPush strategy.
-      </article>
-    </section>
-
-    <section>
-      <header>ngOnChanges</header>
-      <article>
-        <p>Lifecycle hook that is called when any data-bound property of a directive changes.</p>
-        <br />
-        `ngOnChanges` is called right after the data-bound properties have been checked and before view and content
-        children are checked if at least one of them has changed.
-      </article>
-    </section>
-
-    <section>
       <header>Good readings</header>
       <ul>
         <li>

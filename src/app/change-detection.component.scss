@@ -78,6 +78,7 @@ $collapse-button-size: 15px;
         font-size: 10px;
         color: black;
         background-color: white;
+        white-space: pre;
       }
 
       > span.strategy-box {
@@ -125,16 +126,16 @@ $collapse-button-size: 15px;
           background-color: #ffe6e6;
         }
       }
+    }
 
-      > span.ng-on-changes-box {
-        border-color: darkgray;
-        color: darkgray;
+    span.ng-on-changes-box {
+      border-color: darkgray;
+      color: darkgray;
 
-        &.ng-on-changes {
-          border-color: red;
-          color: red;
-          background-color: #ffe6e6;
-        }
+      &.ng-on-changes {
+        border-color: red;
+        color: red;
+        background-color: #ffe6e6;
       }
     }
 

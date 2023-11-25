@@ -50,7 +50,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
 
   public inputObservableValue!: number;
   public cdStrategyName: string;
-  public cdStatus: 'traversal'|'dirty'|null = null;
+  public cdStatus: 'traversal'|'dirty'|'dirty consummer'|null = null;
 
   private _hostRef = inject(ElementRef);
   private _colorService = inject(ColorService);
@@ -120,7 +120,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
 
     // install outside Angular zone to not trigger change detection
     this._zone.runOutsideAngular(() => {
-      timer(0, 500)
+      timer(0, 200)
           .pipe(
               map(() => cdStatus(this._cd)),
               distinctUntilChanged(),
@@ -171,7 +171,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   }
 
   public ngDoCheck(): void {
-    this._colorService.colorNgDoCheck(this._ngDoCheckBox);
+    // this._colorService.colorNgDoCheck(this._ngDoCheckBox);
   }
 
   public get touch(): void {
@@ -200,13 +200,18 @@ function resolveChangeDetectionStrategyName(strategy: ChangeDetectionStrategy):
   return ChangeDetectionStrategy[strategy];
 }
 
-function cdStatus(cdRef: ChangeDetectorRef): 'traversal'|'dirty'|null {
-  const flags: number = (cdRef as any)._lView[2];  // FLAGS=2
+function cdStatus(cdRef: ChangeDetectorRef): 'traversal'|'dirty'|
+    'dirty consummer'|null {
+  let lView = (cdRef as any)._lView;
+  const flags: number = lView[2];  // FLAGS=2
+  const consumer = lView[23];      // REACTIVE_TEMPLATE_CONSUMER =  23
 
   if (flags & 64) {  // LViewFlags.Dirty = 1 << 6 = 64
     return 'dirty';
   } else if (flags & 8192) {  // LViewFlags.HasChildViewsToRefresh = 8192
     return 'traversal';
+  } else if (consumer.dirty) {
+    return 'dirty consummer';
   } else {
     return null;
   }
