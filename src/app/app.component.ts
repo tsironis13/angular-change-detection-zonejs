@@ -1,5 +1,6 @@
-import {AfterViewInit, ApplicationRef, Component, DestroyRef, ElementRef, inject, NgZone, ViewChild} from '@angular/core';
+import {AfterViewInit, ApplicationRef, Component, DestroyRef, ElementRef, inject, NgZone, OnInit, ViewChild} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {toCanvas} from 'qrcode';
 import {Subject} from 'rxjs';
 
 import {DirtyCheckColoringService} from './dirty-check-coloring.service';
@@ -11,7 +12,7 @@ import {WarningService} from './warning.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit {
   private destroyRef = inject(DestroyRef);
 
   private value = 0;
@@ -53,6 +54,9 @@ export class AppComponent implements AfterViewInit {
   @ViewChild('propagate_in_zone_checkbox', {static: true})
   private _propagateInZoneCheckbox!: ElementRef<HTMLInputElement>;
 
+  @ViewChild('qrcode_canvas', {static: true})
+  private _canvas!: ElementRef<HTMLCanvasElement>;
+
   constructor(
       private _zone: NgZone,
       private _appRef: ApplicationRef,
@@ -60,103 +64,111 @@ export class AppComponent implements AfterViewInit {
       private _warningService: WarningService,
   ) {}
 
+  ngOnInit(): void{var canvas = document.getElementById('canvas')
+
+    toCanvas(this._canvas.nativeElement, window.location.href , function(error) {
+    if (error) console.error(error)
+      console.log('success!');
+    })
+  }
+
   onTick() {
-    this._dirtyCheckColoringService.clearColoring();
-    this._appRef.tick();
-    this._warningService.hideWarning();
-  }
-
-  onTimeout() {
-    setTimeout(() => {
+      this._dirtyCheckColoringService.clearColoring();
+      this._appRef.tick();
       this._warningService.hideWarning();
-      this._zone.run(() => console.log(`setTimeout(...)`));
-    }, 3000);
-  }
-
-  onClear() {
-    this._warningService.hideWarning();
-    this._dirtyCheckColoringService.clearColoring();
-    console.log('alla');
-  }
-
-  clickNoop(): void {
-    console.log(`click`);
-  }
-
-  onAutoCheckboxChange(event: Event) {
-    const element = event.target as HTMLInputElement;
-    this._dirtyCheckColoringService.setAutoClearColoring(element.checked);
-  }
-
-  onChange() {
-    this._dirtyCheckColoringService.clearColoring();
-    if (this.isPropagateInZone()) {
-      this._zone.run(() => this.updateInputValue());
-    } else {
-      this.updateInputValue();
-    }
-  }
-
-  public ngAfterViewInit(): void {
-    this._dirtyCheckColoringService.setAutoClearColoring(this.isAutoClear());
-
-    // Busy
-    this._dirtyCheckColoringService.busy$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((busy) => {
-          this._apptickButton.nativeElement.disabled = busy;
-          this._timeoutButton.nativeElement.disabled = busy;
-          this._clickButton.nativeElement.disabled = busy;
-          this._autoClearCheckbox.nativeElement.disabled = busy;
-          this._triggerChangeButton.nativeElement.disabled = busy;
-          this._propagateByValueCheckbox.nativeElement.disabled = busy;
-          this._propagateByRefCheckbox.nativeElement.disabled = busy;
-          this._propagateByObservableCheckbox.nativeElement.disabled = busy;
-          this._propagateInZoneCheckbox.nativeElement.disabled = busy;
-          if (busy && !this._dirtyCheckColoringService.isAutoClearColoring) {
-            this._clearButton.nativeElement.classList.add('emphasize');
-          } else {
-            this._clearButton.nativeElement.classList.remove('emphasize');
-          }
-        });
-  }
-
-
-  private updateInputValue(): void {
-    this.value++;
-    if (this.isPropagateByValue()) {
-      this.inputByVal = this.value;
-    }
-    if (this.isPropagateByRef()) {
-      this.inputByRef.value = this.value;
-    }
-    if (this.isPropagateByObservable()) {
-      this.inputObservable.next(this.value);
     }
 
-    // Update DOM directly because outside Angular zone to not trigger change
-    // detection
-    const valueElement = this._inputValueField.nativeElement;
-    valueElement.innerHTML = this.value.toString(10);
-  }
+    onTimeout() {
+      setTimeout(() => {
+        this._warningService.hideWarning();
+        this._zone.run(() => console.log(`setTimeout(...)`));
+      }, 3000);
+    }
 
-  private isAutoClear(): boolean {
-    return this._autoClearCheckbox.nativeElement.checked;
-  }
+    onClear() {
+      this._warningService.hideWarning();
+      this._dirtyCheckColoringService.clearColoring();
+      console.log('alla');
+    }
 
-  private isPropagateByValue(): boolean {
-    return this._propagateByValueCheckbox.nativeElement.checked;
-  }
+    clickNoop(): void {
+      console.log(`click`);
+    }
 
-  private isPropagateByRef(): boolean {
-    return this._propagateByRefCheckbox.nativeElement.checked;
-  }
+    onAutoCheckboxChange(event: Event) {
+      const element = event.target as HTMLInputElement;
+      this._dirtyCheckColoringService.setAutoClearColoring(element.checked);
+    }
 
-  private isPropagateByObservable(): boolean {
-    return this._propagateByObservableCheckbox.nativeElement.checked;
-  }
+    onChange() {
+      this._dirtyCheckColoringService.clearColoring();
+      if (this.isPropagateInZone()) {
+        this._zone.run(() => this.updateInputValue());
+      } else {
+        this.updateInputValue();
+      }
+    }
 
-  private isPropagateInZone(): boolean {
-    return this._propagateInZoneCheckbox.nativeElement.checked;
-  }
+    public ngAfterViewInit(): void {
+      this._dirtyCheckColoringService.setAutoClearColoring(this.isAutoClear());
+
+      // Busy
+      this._dirtyCheckColoringService.busy$
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe((busy) => {
+            this._apptickButton.nativeElement.disabled = busy;
+            this._timeoutButton.nativeElement.disabled = busy;
+            this._clickButton.nativeElement.disabled = busy;
+            this._autoClearCheckbox.nativeElement.disabled = busy;
+            this._triggerChangeButton.nativeElement.disabled = busy;
+            this._propagateByValueCheckbox.nativeElement.disabled = busy;
+            this._propagateByRefCheckbox.nativeElement.disabled = busy;
+            this._propagateByObservableCheckbox.nativeElement.disabled = busy;
+            this._propagateInZoneCheckbox.nativeElement.disabled = busy;
+            if (busy && !this._dirtyCheckColoringService.isAutoClearColoring) {
+              this._clearButton.nativeElement.classList.add('emphasize');
+            } else {
+              this._clearButton.nativeElement.classList.remove('emphasize');
+            }
+          });
+    }
+
+
+    private updateInputValue(): void {
+      this.value++;
+      if (this.isPropagateByValue()) {
+        this.inputByVal = this.value;
+      }
+      if (this.isPropagateByRef()) {
+        this.inputByRef.value = this.value;
+      }
+      if (this.isPropagateByObservable()) {
+        this.inputObservable.next(this.value);
+      }
+
+      // Update DOM directly because outside Angular zone to not trigger change
+      // detection
+      const valueElement = this._inputValueField.nativeElement;
+      valueElement.innerHTML = this.value.toString(10);
+    }
+
+    private isAutoClear(): boolean {
+      return this._autoClearCheckbox.nativeElement.checked;
+    }
+
+    private isPropagateByValue(): boolean {
+      return this._propagateByValueCheckbox.nativeElement.checked;
+    }
+
+    private isPropagateByRef(): boolean {
+      return this._propagateByRefCheckbox.nativeElement.checked;
+    }
+
+    private isPropagateByObservable(): boolean {
+      return this._propagateByObservableCheckbox.nativeElement.checked;
+    }
+
+    private isPropagateInZone(): boolean {
+      return this._propagateInZoneCheckbox.nativeElement.checked;
+    }
 }
