@@ -1,31 +1,38 @@
 <div class="control">
-  <section>
-    <header>Trigger global actions</header>
+  <section class="card">
+    <header><h3>Trigger global actions</h3></header>
     <nav>
-      <button #apptick_button (click.outside)="onTick()">AppRef.tick()</button>
-      <button #timeout_button (click.outside)="onTimeout()" title="Installs a timeout to run in 3s (in ng-zone)">
+      <button #apptick_button (click.outside)="onTick()" text="AppRef.tick()">AppRef.tick()</button>
+      <button
+        #timeout_button
+        (click.outside)="onTimeout()"
+        text="setTimeout(...)"
+        title="Installs a timeout to run in 3s (in ng-zone)"
+      >
         setTimeout(...)
       </button>
-      <button #click_button (click)="clickNoop()" title="Click with a NoOp">Click</button>
+      <button #click_button (click)="clickNoop()" title="Click with a NoOp" text="Click">Click</button>
     </nav>
   </section>
 
-  <section>
-    <header>Control dirty check coloring</header>
+  <section class="card">
+    <header><h3>Control dirty check coloring</h3></header>
     <nav>
       <label>
         <input type="checkbox" #auto_clear checked (change.outside)="onAutoCheckboxChange($event)" />Clear dirty check
         coloring automatically
       </label>
       <span class="filler"></span>
-      <button #clear (click.outside)="onClear()">Clear</button>
+      <button #clear (click.outside)="onClear()" text="Clear">Clear</button>
     </nav>
   </section>
 
-  <section>
-    <header>Play with component input - current value: <span #input_value_field>n/a</span></header>
+  <section class="card">
+    <header>
+      <h3>Play with component input - current value: <span #input_value_field>n/a</span></h3>
+    </header>
     <nav>
-      <button #trigger_change (click.outside)="onChange()">Trigger change</button>
+      <button #trigger_change (click.outside)="onChange()" text="Trigger change">Trigger change</button>
       <label
         ><input
           type="checkbox"
@@ -60,9 +67,24 @@
 <main>
   <app-comp-1 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1>
 
+  <section class="card">
+    <header><h3>Change detection details</h3></header>
+    <article>
+      <ul>
+        <li>
+          Every event listeners in templates (like click) will mark every ancestor as dirty. This is not directly
+          visible on this demo but explains why OnPush parents still run change detection.
+        </li>
+        <li>Mark for check won't fire a CD cycle, this is done by the scheduler (currently NgZone)</li>
+        <li>Signal updates won't fire a CD cycle, this is done by the scheduler (currently NgZone)</li>
+        <li>Signal updates will mark the component as a dirty consummer & all ancestor as traversal</li>
+      </ul>
+    </article>
+  </section>
+
   <div class="explanation">
-    <section>
-      <header>Good readings</header>
+    <section class="card">
+      <header><h3>Good readings</h3></header>
       <ul>
         <li>
           <a
@@ -78,11 +100,16 @@
             >ANGULAR CHANGE DETECTION EXPLAINED</a
           >
         </li>
+        <li>
+          <a href="https://medium.com/@antoniopk/angular-change-detection-explained-169aea595423" target="_blank">
+            Change Detection Fundamentals in Angular
+          </a>
+        </li>
       </ul>
     </section>
 
-    <section>
-      <header>Credit</header>
+    <section class="card">
+      <header><h3>Credit</h3></header>
       <article>
         <p>
           This project is forked from
