@@ -160,7 +160,7 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
     this._warningService.showWarning();
   }
 
-  private getCdStatus(cdRef: ChangeDetectorRef): 'traversal'|'dirty'|'dirty consumer'|null {
+  private getCdStatus(cdRef: ChangeDetectorRef): CdStatus {
     let lView = (cdRef as any)._lView;
     const flags: number = lView[2];  // FLAGS=2
     const consumer = lView[23];      // REACTIVE_TEMPLATE_CONSUMER =  23
@@ -170,15 +170,16 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
       return 'dirty';
     } else if (flags & 8192) {
       // LViewFlags.HasChildViewsToRefresh = 8192
-      return 'traversal';
+      return 'HasChildViewsToRefresh';
     } else if (consumer.dirty) {
-      return 'dirty consumer';
+      return 'RefreshView';
     } else {
       return null;
     }
   }
 }
 
+type CdStatus = 'HasChildViewsToRefresh'|'RefreshView'|'dirty'|null;
 
 
 @Injectable({providedIn: 'root'})
