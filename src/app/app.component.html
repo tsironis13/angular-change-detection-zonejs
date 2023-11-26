@@ -72,8 +72,8 @@
     <article>
       <ul>
         <li>
-          Every event listeners in templates (like click) will mark every ancestor as dirty. This is not directly
-          visible on this demo but explains why OnPush parents still run change detection.
+          Every event listeners in templates (like click) will mark every ancestor as dirty. This is why OnPush parents
+          still run change detection on click.
         </li>
         <li>Mark for check won't fire a CD cycle, this is done by the scheduler (currently NgZone)</li>
         <li>Signal updates won't fire a CD cycle, this is done by the scheduler (currently NgZone)</li>
