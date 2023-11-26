@@ -192,10 +192,14 @@ span.strategy-box {
 .action-wrapper {
   display: flex;
   flex-direction: column;
-  max-width: 128px;
+  max-width: 138px;
+  margin-top: 4px;
 
   .tag {
     font-size: 11px;
+    &:not(:last-child) {
+      margin-right: 4px;
+    }
   }
 }
 
