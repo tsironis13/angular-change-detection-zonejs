@@ -1,24 +1,18 @@
-import { ElementRef, Injectable, NgZone } from "@angular/core";
-import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
+import {ElementRef, Injectable, NgZone} from '@angular/core';
+
+import {DirtyCheckColoringService} from './dirty-check-coloring.service';
 
 @Injectable()
 export class ColorService {
-  private ngDoCheckHandle?: number;
   private ngOnChangesHandle?: number;
 
-  constructor(private _zone: NgZone, private _dirtyCheckColoringService: DirtyCheckColoringService) {}
-
-  public colorNgDoCheck(elementRef: ElementRef<HTMLElement>): void {
-    this._zone.runOutsideAngular(() => {
-      clearTimeout(this.ngDoCheckHandle);
-      this.ngDoCheckHandle = this.blink(elementRef.nativeElement, "ng-do-check");
-    });
-  }
+  constructor(
+      private _zone: NgZone, private _dirtyCheckColoringService: DirtyCheckColoringService) {}
 
   public colorNgOnChanges(elementRef: ElementRef<HTMLElement>): void {
     this._zone.runOutsideAngular(() => {
       clearTimeout(this.ngOnChangesHandle);
-      this.ngOnChangesHandle = this.blink(elementRef.nativeElement, "ng-on-changes");
+      this.ngOnChangesHandle = this.blink(elementRef.nativeElement, 'ng-on-changes');
     });
   }
 
@@ -30,13 +24,13 @@ export class ColorService {
 
   public colorChangeDetectorDetached(hostRef: ElementRef<HTMLElement>): void {
     this._zone.runOutsideAngular(() => {
-      hostRef.nativeElement.classList.add("cd-detached");
+      hostRef.nativeElement.classList.add('cd-detached');
     });
   }
 
   public colorChangeDetectorAttached(hostRef: ElementRef<HTMLElement>): void {
     this._zone.runOutsideAngular(() => {
-      hostRef.nativeElement.classList.remove("cd-detached");
+      hostRef.nativeElement.classList.remove('cd-detached');
     });
   }
 
