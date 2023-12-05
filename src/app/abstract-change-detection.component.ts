@@ -54,7 +54,6 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
 
     this._stateService.state$.pipe(takeUntilDestroyed()).subscribe((force) => {
       const cdStatus = this.getCdStatus(this._cd);
-      console.log(cdStatus);
       if (cdStatus || force) {
         this._ngMarked.nativeElement.innerHTML = cdStatus;
         this._ngMarked.nativeElement.className = '';
@@ -171,15 +170,17 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
     } else if (flags & 8192) {
       // LViewFlags.HasChildViewsToRefresh = 8192
       return 'HasChildViewsToRefresh';
-    } else if (consumer.dirty) {
+    } else if (flags & 1024) {
       return 'RefreshView';
+    } else if (consumer.dirty) {
+      return 'Consumer dirty';
     } else {
       return null;
     }
   }
 }
 
-type CdStatus = 'HasChildViewsToRefresh'|'RefreshView'|'dirty'|null;
+type CdStatus = 'HasChildViewsToRefresh'|'RefreshView'|'dirty'|'Consumer dirty'|null;
 
 
 @Injectable({providedIn: 'root'})

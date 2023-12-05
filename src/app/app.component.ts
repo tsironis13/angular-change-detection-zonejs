@@ -20,16 +20,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   public inputByRef = new NumberHolder();
   public inputObservable = new Subject<number>();
 
-  @ViewChild('apptick_button', {static: true})
-  private _apptickButton!: ElementRef;
+  @ViewChild('apptick_button', {static: true}) private _apptickButton!: ElementRef;
 
-  @ViewChild('timeout_button', {static: true})
-  private _timeoutButton!: ElementRef;
+  @ViewChild('timeout_button', {static: true}) private _timeoutButton!: ElementRef;
 
   @ViewChild('click_button', {static: true}) private _clickButton!: ElementRef;
 
-  @ViewChild('trigger_change', {static: true})
-  private _triggerChangeButton!: ElementRef;
+  @ViewChild('trigger_change', {static: true}) private _triggerChangeButton!: ElementRef;
 
   @ViewChild('clear', {static: true}) private _clearButton!: ElementRef;
 
@@ -54,8 +51,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('propagate_in_zone_checkbox', {static: true})
   private _propagateInZoneCheckbox!: ElementRef<HTMLInputElement>;
 
-  @ViewChild('qrcode_canvas', {static: true})
-  private _canvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('qrcode_canvas', {static: true}) private _canvas!: ElementRef<HTMLCanvasElement>;
 
   constructor(
       private _zone: NgZone,
@@ -88,7 +84,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     onClear() {
       this._warningService.hideWarning();
       this._dirtyCheckColoringService.clearColoring();
-      console.log('alla');
     }
 
     clickNoop(): void {
@@ -113,8 +108,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this._dirtyCheckColoringService.setAutoClearColoring(this.isAutoClear());
 
       // Busy
-      this._dirtyCheckColoringService.busy$
-          .pipe(takeUntilDestroyed(this.destroyRef))
+      this._dirtyCheckColoringService.busy$.pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe((busy) => {
             this._apptickButton.nativeElement.disabled = busy;
             this._timeoutButton.nativeElement.disabled = busy;
