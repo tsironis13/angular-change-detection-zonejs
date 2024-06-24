@@ -67,3 +67,15 @@
     cursor: pointer;
   }
 }
+
+footer {
+  padding: 8px;
+  background: var(--red-to-pink-to-purple-horizontal-gradient);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: underline;
+
+  a {
+    font-weight: bold;
+  }
+}
