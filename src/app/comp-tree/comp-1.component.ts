@@ -1,11 +1,13 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 
-import {AbstractChangeDetectionComponent} from '../abstract-change-detection.component';
+import { AbstractChangeDetectionComponent } from "../abstract-change-detection.component";
 
-import {template} from '../change-detection.component.template';
-import {ColorService} from '../color.service';
+import { template } from "../change-detection.component.template";
+import { ColorService } from "../color.service";
+import { Comp_1_2_Component } from "./comp-1-2.component";
+import { Comp_1_1_Component } from "./comp-1-1.component";
 
-const NAME = 'comp-1';
+const NAME = "comp-1";
 const LEVEL = 1;
 const CD_STRATEGY = ChangeDetectionStrategy.Default;
 const CHILD_TEMPLATE = `
@@ -41,9 +43,11 @@ const CHILD_TEMPLATE = `
 @Component({
   selector: `app-${NAME}`,
   template: template(CHILD_TEMPLATE),
-  styleUrls: ['./../change-detection.component.scss'],
+  styleUrls: ["./../change-detection.component.scss"],
   providers: [ColorService],
   changeDetection: CD_STRATEGY,
+  standalone: true,
+  imports: [Comp_1_1_Component, Comp_1_2_Component],
 })
 export class Comp_1_Component extends AbstractChangeDetectionComponent {
   constructor() {

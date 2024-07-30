@@ -1,9 +1,19 @@
-import {enableProdMode} from '@angular/core';
-import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
-
-import {AppModule} from './app/app.module';
+import { enableProdMode } from "@angular/core";
+import {
+  bootstrapApplication,
+  EVENT_MANAGER_PLUGINS,
+} from "@angular/platform-browser";
+import { AppComponent } from "./app/app.component";
+import { ZoneEventPlugin } from "./app/zone.event-plugin";
 
 enableProdMode();
 
-platformBrowserDynamic().bootstrapModule(AppModule).catch(
-    err => console.error(err));
+bootstrapApplication(AppComponent, {
+  providers: [
+    {
+      provide: EVENT_MANAGER_PLUGINS,
+      useClass: ZoneEventPlugin,
+      multi: true,
+    },
+  ],
+}).catch((err) => console.error(err));
