@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { AfterViewChecked, ChangeDetectionStrategy, Component } from "@angular/core";
 
 import { AbstractChangeDetectionComponent } from "../abstract-change-detection.component";
 
@@ -11,12 +11,12 @@ const NAME = "comp-1-2";
 const LEVEL = 2;
 const CD_STRATEGY = ChangeDetectionStrategy.OnPush;
 const CHILD_TEMPLATE = `
-  <app-comp-1-x-1 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
+  <app-comp-1-x-1 [inputSignal]="inputSignal()" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
    <!-- <app-comp-1-x-1-3 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-1-3>
     <app-comp-1-x-1-4 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-1-4>
     -->
   </app-comp-1-x-1>
-  <app-comp-1-x-2 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
+  <app-comp-1-x-2 [inputSignal]="inputSignal()" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable">
   <!--
     <app-comp-1-x-2-3 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-2-3>
     <app-comp-1-x-2-4 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-2-4>
@@ -33,8 +33,12 @@ const CHILD_TEMPLATE = `
   standalone: true,
   imports: [Comp_1_x_1_Component, Comp_1_x_2_Component],
 })
-export class Comp_1_2_Component extends AbstractChangeDetectionComponent {
+export class Comp_1_2_Component extends AbstractChangeDetectionComponent implements AfterViewChecked {
   constructor() {
     super(NAME, LEVEL, CD_STRATEGY);
+  }
+
+  ngAfterViewChecked(): void {
+    console.log("Comp_1_2_Component_ngAfterViewChecked");
   }
 }

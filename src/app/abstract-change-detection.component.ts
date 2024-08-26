@@ -1,12 +1,29 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, Directive, ElementRef, HostBinding, inject, Injectable, Input, NgZone, OnChanges, signal, SimpleChanges, ViewChild} from '@angular/core';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {fromEvent, Observable, Subject} from 'rxjs';
-import {takeUntil, tap} from 'rxjs/operators';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  DestroyRef,
+  Directive,
+  ElementRef,
+  HostBinding,
+  inject,
+  Injectable,
+  input,
+  Input,
+  NgZone,
+  OnChanges,
+  signal,
+  SimpleChanges,
+  ViewChild,
+} from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { fromEvent, Observable, Subject } from "rxjs";
+import { takeUntil, tap } from "rxjs/operators";
 
-import {ColorService} from './color.service';
-import {DirtyCheckColoringService} from './dirty-check-coloring.service';
-import {NumberHolder} from './number-holder';
-import {WarningService} from './warning.service';
+import { ColorService } from "./color.service";
+import { DirtyCheckColoringService } from "./dirty-check-coloring.service";
+import { NumberHolder } from "./number-holder";
+import { WarningService } from "./warning.service";
 
 @Directive()
 export abstract class AbstractChangeDetectionComponent implements AfterViewInit, OnChanges {
@@ -14,27 +31,29 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   private _destroyInputObservable$ = new Subject<void>();
   private cdRef = inject(ChangeDetectorRef);
 
-  @ViewChild('execute_button', {static: true})
+  @ViewChild("execute_button", { static: true })
   private _executeButton!: ElementRef<HTMLButtonElement>;
-  @ViewChild('hidden_button', {static: true}) private _hiddenButton!: ElementRef<HTMLButtonElement>;
-  @ViewChild('action_list', {static: true}) private _actionSelect!: ElementRef<HTMLSelectElement>;
+  @ViewChild("hidden_button", { static: true }) private _hiddenButton!: ElementRef<HTMLButtonElement>;
+  @ViewChild("action_list", { static: true }) private _actionSelect!: ElementRef<HTMLSelectElement>;
 
-  @ViewChild('cd_state_box', {static: true}) private _cdStateBox!: ElementRef;
+  @ViewChild("cd_state_box", { static: true }) private _cdStateBox!: ElementRef;
 
-  @ViewChild('ng_on_changes_box', {static: true}) private _ngOnChangesBox!: ElementRef;
-  @ViewChild('ng_marked', {static: true}) private _ngMarked!: ElementRef;
+  @ViewChild("ng_on_changes_box", { static: true }) private _ngOnChangesBox!: ElementRef;
+  @ViewChild("ng_marked", { static: true }) private _ngMarked!: ElementRef;
 
   @Input() public inputByRef!: NumberHolder;
   @Input() public inputByVal!: number;
   @Input() public inputObservable!: Observable<number>;
+  public inputSignal = input<number>(0);
 
-  @HostBinding('attr.class')
+  @HostBinding("attr.class")
   public get hostClass(): string {
     return `${this.cdStrategyName} level-${this._level}`;
   }
 
   public inputObservableValue!: number;
   public cdStrategyName: string;
+  public componentName: string;
 
   private _hostRef = inject(ElementRef);
   private _colorService = inject(ColorService);
@@ -44,20 +63,22 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   private _warningService = inject(WarningService);
   private _stateService = inject(StateService);
   protected signal = signal(0);
+  protected prop = 0;
 
   constructor(
-      public name: string,
-      private _level: number,
-      cdStrategy: ChangeDetectionStrategy,
+    public name: string,
+    private _level: number,
+    cdStrategy: ChangeDetectionStrategy,
   ) {
     this.cdStrategyName = ChangeDetectionStrategy[cdStrategy];
+    this.componentName = name;
 
     this._stateService.state$.pipe(takeUntilDestroyed()).subscribe((force) => {
       const cdStatus = this.getCdStatus(this._cd);
       if (cdStatus || force) {
         this._ngMarked.nativeElement.innerHTML = cdStatus;
-        this._ngMarked.nativeElement.className = '';
-        this._ngMarked.nativeElement.classList.add('tag', cdStatus?.replace(' ', '-'));
+        this._ngMarked.nativeElement.className = "";
+        this._ngMarked.nativeElement.classList.add("tag", cdStatus?.replace(" ", "-"));
       }
     });
   }
@@ -65,49 +86,59 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   public ngAfterViewInit(): void {
     // install outside Angular zone to not trigger change detection
     this._zone.runOutsideAngular(() => {
-      this._dirtyCheckColoringService.busy$.pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe((busy) => {
-            this._actionSelect.nativeElement.disabled = busy;
-            this._executeButton.nativeElement.disabled = busy;
-            if (!busy) {
-              this._stateService.updateState(true);
-            }
-          });
+      this._dirtyCheckColoringService.busy$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((busy) => {
+        console.log("Is Busy: " + busy);
+        this._actionSelect.nativeElement.disabled = busy;
+        this._executeButton.nativeElement.disabled = busy;
+        if (!busy) {
+          this._stateService.updateState(true);
+        }
+      });
 
       // Signal change
-      fromEvent(this._executeButton.nativeElement, 'click')
-          .pipe(
-              takeUntilDestroyed(this.destroyRef),
-              tap(() => this._dirtyCheckColoringService.clearColoring()),
-              )
-          .subscribe(() => {
-            const action = this._actionSelect.nativeElement.value;
-            switch (action) {
-              case 'click':
-                // we click on the hidden button to trigger a
-                // template binding event
-                this._hiddenButton.nativeElement.click();
-                break;
-              case 'detach':
-                this.onDetach();
-                break;
-              case 'attach':
-                this.onAttach();
-                break;
-              case 'dc':
-                this.onDetectChanges();
-                break;
-              case 'mfc':
+      fromEvent(this._executeButton.nativeElement, "click")
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          tap(() => this._dirtyCheckColoringService.clearColoring()),
+        )
+        .subscribe(() => {
+          const action = this._actionSelect.nativeElement.value;
+          switch (action) {
+            case "click":
+              // we click on the hidden button to trigger a
+              // template binding event
+              this._hiddenButton.nativeElement.click();
+              break;
+            case "detach":
+              this.onDetach();
+              break;
+            case "attach":
+              this.onAttach();
+              break;
+            case "dc":
+              this.onDetectChanges();
+              break;
+            case "mfc":
+              this._zone.runOutsideAngular(() => {
                 this.onMarkForCheck();
-                break;
-              case 'signal':
-                this.onSignal();
-                break;
-            }
-            if (action != 'click') {
-              this._stateService.updateState();
-            }
-          });
+              });
+
+              break;
+            case "signal":
+              // this._zone.run(() => {
+              this.onSignal();
+              // });
+              break;
+            case "prop":
+              //this._zone.run(() => {
+              this.onProp();
+              //});
+              break;
+          }
+          if (action != "click") {
+            this._stateService.updateState();
+          }
+        });
     });
   }
 
@@ -115,8 +146,8 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
     if (changes.inputObservable) {
       this._destroyInputObservable$.next();
       this.inputObservable
-          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this._destroyInputObservable$))
-          .subscribe((value) => (this.inputObservableValue = value));
+        .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this._destroyInputObservable$))
+        .subscribe((value) => (this.inputObservableValue = value));
     }
     this._colorService.colorNgOnChanges(this._ngOnChangesBox);
   }
@@ -155,35 +186,46 @@ export abstract class AbstractChangeDetectionComponent implements AfterViewInit,
   }
 
   private onSignal(): void {
+    console.log(this.signal());
     this.signal.update((v) => v + 1);
+    //this.signal.set(10);
+    console.log(this.signal());
     this._warningService.showWarning();
+  }
+
+  private onProp(): void {
+    this.prop = this.prop + 1;
+    this._warningService.showWarning();
+    //this.cdRef.markForCheck();
   }
 
   private getCdStatus(cdRef: ChangeDetectorRef): CdStatus {
     let lView = (cdRef as any)._lView;
-    const flags: number = lView[2];  // FLAGS=2
-    const consumer = lView[23];      // REACTIVE_TEMPLATE_CONSUMER =  23
+
+    const flags: number = lView[2]; // FLAGS=2
+    const consumer = lView[23]; // REACTIVE_TEMPLATE_CONSUMER =  23
 
     if (flags & 64) {
       // LViewFlags.Dirty = 1 << 6 = 64
-      return 'dirty';
+      return "dirty";
     } else if (flags & 8192) {
       // LViewFlags.HasChildViewsToRefresh = 8192
-      return 'HasChildViewsToRefresh';
+      return "HasChildViewsToRefresh";
     } else if (flags & 1024) {
-      return 'RefreshView';
+      return "RefreshView";
     } else if (consumer.dirty) {
-      return 'Consumer dirty';
+      return "Consumer dirty";
     } else {
+      //console.log(flags);
+
       return null;
     }
   }
 }
 
-type CdStatus = 'HasChildViewsToRefresh'|'RefreshView'|'dirty'|'Consumer dirty'|null;
+type CdStatus = "HasChildViewsToRefresh" | "RefreshView" | "dirty" | "Consumer dirty" | null;
 
-
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: "root" })
 export class StateService {
   private _state = new Subject<boolean>();
 

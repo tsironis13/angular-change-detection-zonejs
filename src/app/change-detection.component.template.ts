@@ -1,4 +1,4 @@
-export function template(children: string = ''): string {
+export function template(children: string = ""): string {
   return `
         {{touch}}
      <!--   <button class="toggle-visibility" #toggle_visiblity (click.outside)="onToggleVisibility()">-</button>-->
@@ -6,6 +6,7 @@ export function template(children: string = ''): string {
         <span>
         <span class="tag strategy-box {{cdStrategyName}}">{{cdStrategyName}}</span>
         </span>
+        <span>{{componentName}}</span>
         <span>     
         <span class="tag" #ng_marked></span>
         </span>
@@ -18,9 +19,11 @@ export function template(children: string = ''): string {
             </div>
             <table class="input-box">
               <tr><th>input value:</th><td class="input-value">{{inputByVal}}</td></tr>
+              <tr><th>input signal:</th><td class="input-value">{{inputSignal()}}</td></tr>
               <tr><th>object prop:</th><td class="input-value">{{inputByRef.value}}</td></tr>
               <tr><th>observable:</th><td class="input-value">{{inputObservableValue}}</td></tr>
               <tr><th>local signal:</th><td class="input-value">{{signal()}}</td></tr>
+              <tr><th>local prop:</th><td class="input-value">{{prop}}</td></tr>
             </table>
             <div class="action">
               <select #action_list>
@@ -28,6 +31,7 @@ export function template(children: string = ''): string {
                 <option value="detach">Detach</option>
                 <option value="attach">Attach</option>
                 <option value="signal">Increment signal</option>
+                <option value="prop">Increment property</option>
                 <option value="dc">Detect changes</option>
                 <option value="mfc">Mark for check</option>
               </select>

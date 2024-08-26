@@ -1,3 +1,4 @@
+<div class="bg-slate-700 text-white p-4">Angular v17 Zonejs Application</div>
 <div class="control">
   <section class="card">
     <header><h3>Trigger global actions</h3></header>
@@ -10,6 +11,14 @@
         title="Installs a timeout to run in 3s (in ng-zone)"
       >
         setTimeout(...)
+      </button>
+      <button
+        #interval_button
+        (click.outside)="onInterval()"
+        text="setInterval(...)"
+        title="Installs an interval to run twice every 4s"
+      >
+        setInterval(...)
       </button>
       <button #click_button (click)="clickNoop()" title="Click with a NoOp" text="Click">Click</button>
     </nav>
@@ -33,6 +42,15 @@
     </header>
     <nav>
       <button #trigger_change (click.outside)="onChange()" text="Trigger change">Trigger change</button>
+
+      <label
+        ><input
+          type="checkbox"
+          #propagate_by_input_signal_checkbox
+          checked
+          title="Provides the new value as an input signal"
+        />change input signal</label
+      >
       <label
         ><input
           type="checkbox"
@@ -65,12 +83,11 @@
 <div class="cd-warning" (click.outside)="onTick()">Remember to trigger <i>tick()</i> to fire CD</div>
 
 <main>
-  <app-comp-1 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1>
-
-  <section class="card">
-    <header><h3>Change detection details</h3></header>
-    <article>
-      <ul>
+  <div class="grid px-6">
+    <div>Angular v17 backed up with zonejs observations:</div>
+    <div class="py-2">
+      <ul class="list-disc">
+        <li>Click, setTimeout and setInterval actions trigger change detection cycle.</li>
         <li>
           Event listeners in templates (like click) will mark the ancestors as dirty. This is why OnPush parents still
           run change detection on click. (<a
@@ -80,10 +97,97 @@
         </li>
         <li>Mark for check won't fire a CD cycle, this is done by the scheduler (currently NgZone)</li>
         <li>Signal updates won't fire a CD cycle, this is done by the scheduler (currently NgZone)</li>
-        <li>Signal updates will mark the component as a dirty consummer & all ancestor as traversal</li>
+        <li>
+          Signal updates will mark the component as a dirty consummer & all ancestor as traversal. <br />New change
+          detection mode added on v17 related to signal updates, explained in detail below.
+        </li>
       </ul>
-    </article>
-  </section>
+    </div>
+    <div class="py-2">
+      NgZone triggers change detection in GlobalMode (top-down checking and refreshing all components). Version 17
+      introduced a new change detection mode, called TargetedMode. Change detection running in this mode is more
+      optimized compared to how it was performed before v17. More details on how the cd mechanism works on versions
+      prior to 17 can be found here:
+      https://justangular.com/blog/a-change-detection-zone-js-zoneless-local-change-detection-and-signals-story.
+    </div>
+    <div class="py-2">
+      Angular switches to this new cd mode when signals are used in component templates. More on signals and the
+      benefits they bring to Angular ecosystem can be found everywhere on the web. In simple words this new TargetedMode
+      adds 2 new flags to each component during the change detection check when a components's bound signal has been
+      changed. The component where the signal has been changed has its consumer marked as dirty and the RefreshView flag
+      is set. All the components up to the tree root hierarchy are marked with the HasChildViewsToRefresh flag.
+    </div>
+    <div>Rules applied during the 2 different change detection modes:</div>
+    <div class="grid grid-cols-2 gap-2">
+      <div>
+        <div>Global Mode</div>
+        <ul class="list-disc">
+          <li>CheckAlways components (normal components without any cd strategy set) are checked always.</li>
+          <li>
+            Dirty OnPush components are checked always. To find out when an OnPush component becomes dirty check this
+            link:
+            https://medium.com/angular-in-depth/deep-dive-into-the-onpush-change-detection-strategy-in-angular-fab5e4da1d69
+          </li>
+          <li>When OnPush Non-Dirty components is found, the mode is switched to Targeted.</li>
+        </ul>
+      </div>
+      <div>
+        <div>Targeted Mode</div>
+        <ul class="list-disc">
+          <li>Only Refresh a view if it has the RefreshView flag set.</li>
+          <li>DO NOT Refresh CheckAlways or regular Dirty flag views.</li>
+          <li>If a view with RefreshView flas is set, traverse children in GlobalMode.</li>
+        </ul>
+      </div>
+    </div>
+    <div>Example of how TargetMode operates using the sample app:</div>
+    <div>
+      Try to increment local signal of comp-1-x-2-1 component. The component's consumer is marked as dirty and all the
+      components up to the root are marked with HasChildViewsToRefresh flag.
+    </div>
+    <div>
+      <ul class="list-disc">
+        <li>
+          ZoneJs triggers change detection and all components starting from top to bottom are checked in GlobalMode.
+        </li>
+        <li>Comp-1 is a check always component; first rule of GlobalMode => bindings refreshed.</li>
+
+        <li>
+          Comp-1-2 is an OnPush NON-Dirty component, so according to the third rule of GlobalMode, TargetMode kicks in
+          and since it is not flagged with the RefreshView flag, it is skipped. All childs of comp-1-2 are skipped due
+          to TargetedMode rules.
+        </li>
+        <li>Comp-1-1 is a check always component; first rule of GlobalMode => bindings refreshed.</li>
+        <li>Comp-1-x-1 is a check always component; first rule of GlobalMode => bindings refreshed.</li>
+        <li>
+          Comp-1-x-1-2 is an OnPush NON-Dirty component, so according to the third rule of GlobalMode, TargetMode kicks
+          in and since it is not flagged with the RefreshView flag, it is skipped.
+        </li>
+        <li>Comp-1-x-1-1 is a check always component; first rule of GlobalMode => bindings refreshed.</li>
+        <li>
+          Comp-1-x-2 is an OnPush NON-Dirty component, so according to the third rule of GlobalMode, TargetMode kicks in
+          and since it is not flagged with the RefreshView flag, it is skipped.
+        </li>
+        <li>Comp-1-x-2-1 is skipped because it is a check always component in TargetedMode (Second rule).</li>
+        <li>
+          Comp-1-x-2-2 is the one where the signal is updated; it is marked with the new special RefreshView flag and it
+          is refreshed according to the first rule.
+        </li>
+      </ul>
+    </div>
+    <div class="pt-2">
+      Another interesting observation is that when comp-1's signal is updated after 3 seconds, the ngAfterViewChecked
+      callback is called for app-component and for comp-1. This is the actual behavior for applications running under
+      zones and the difference can be noticed when we switch to zoneless apps. More on this, in the upcoming post.
+    </div>
+  </div>
+
+  <app-comp-1
+    [inputSignal]="inputSignal()"
+    [inputByVal]="inputByVal"
+    [inputByRef]="inputByRef"
+    [inputObservable]="inputObservable"
+  ></app-comp-1>
 
   <div class="explanation">
     <section class="card">
@@ -115,17 +219,11 @@
       <header><h3>Credit</h3></header>
       <article>
         <p>
-          This project is forked from
-          <a href="https://github.com/danielwiehl/edu-angular-change-detection">Daniel Wiehl's CD demo</a>. I'd like to
-          thank him for his initial work.
+          This project is inspired by
+          <a href="https://khangtrannn.github.io/angular-change-detection/"
+            >https://khangtrannn.github.io/angular-change-detection/</a
+          >.
         </p>
-        <p>
-          You can find this current demo
-          <a href="https://github.com/jeanmeche/angular-change-detection">On my repo</a>.
-        </p>
-
-        <p>QR Code to this page:</p>
-        <canvas #qrcode_canvas></canvas>
       </article>
     </section>
   </div>

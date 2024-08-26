@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { AfterViewChecked, ChangeDetectionStrategy, Component } from "@angular/core";
 import { AbstractChangeDetectionComponent } from "../abstract-change-detection.component";
 import { template } from "../change-detection.component.template";
 import { ColorService } from "../color.service";
@@ -9,8 +9,8 @@ const NAME = "comp-1-x-1";
 const LEVEL = 3;
 const CD_STRATEGY = ChangeDetectionStrategy.Default;
 const CHILD_TEMPLATE = `
-  <app-comp-1-x-1-1 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-1-1>
-  <app-comp-1-x-1-2 [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-1-2>
+  <app-comp-1-x-1-1 [inputSignal]="inputSignal()" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-1-1>
+  <app-comp-1-x-1-2 [inputSignal]="inputSignal()" [inputByVal]="inputByVal" [inputByRef]="inputByRef" [inputObservable]="inputObservable"></app-comp-1-x-1-2>
 `;
 
 @Component({
@@ -22,8 +22,12 @@ const CHILD_TEMPLATE = `
   standalone: true,
   imports: [Comp_1_x_1_1_Component, Comp_1_x_1_2_Component],
 })
-export class Comp_1_x_1_Component extends AbstractChangeDetectionComponent {
+export class Comp_1_x_1_Component extends AbstractChangeDetectionComponent implements AfterViewChecked {
   constructor() {
     super(NAME, LEVEL, CD_STRATEGY);
+  }
+
+  ngAfterViewChecked(): void {
+    console.log("Comp_1_x_1_Component_ngAfterViewChecked");
   }
 }

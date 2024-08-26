@@ -1,4 +1,5 @@
 import {
+  AfterViewChecked,
   AfterViewInit,
   ApplicationRef,
   Component,
@@ -7,6 +8,7 @@ import {
   inject,
   NgZone,
   OnInit,
+  signal,
   ViewChild,
 } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -25,10 +27,11 @@ import { Comp_1_Component } from "./comp-tree/comp-1.component";
   standalone: true,
   imports: [Comp_1_Component],
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, AfterViewChecked {
   private destroyRef = inject(DestroyRef);
 
   private value = 0;
+  public inputSignal = signal(0);
   public inputByVal!: number;
   public inputByRef = new NumberHolder();
   public inputObservable = new Subject<number>();
@@ -36,6 +39,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild("apptick_button", { static: true }) private _apptickButton!: ElementRef;
 
   @ViewChild("timeout_button", { static: true }) private _timeoutButton!: ElementRef;
+
+  @ViewChild("interval_button", { static: true }) private _intervalButton!: ElementRef;
 
   @ViewChild("click_button", { static: true }) private _clickButton!: ElementRef;
 
@@ -54,6 +59,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   @ViewChild("propagate_by_value_checkbox", { static: true })
   private _propagateByValueCheckbox!: ElementRef<HTMLInputElement>;
+
+  @ViewChild("propagate_by_input_signal_checkbox", { static: true })
+  private _propagateByInputSignalCheckbox!: ElementRef<HTMLInputElement>;
 
   @ViewChild("propagate_by_ref_checkbox", { static: true })
   private _propagateByRefCheckbox!: ElementRef<HTMLInputElement>;
@@ -74,12 +82,17 @@ export class AppComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    console.log("ngOnInit");
     var canvas = document.getElementById("canvas");
 
     toCanvas(this._canvas.nativeElement, window.location.href, function (error) {
       if (error) console.error(error);
       console.log("success!");
     });
+  }
+
+  ngAfterViewChecked(): void {
+    console.log("AppComponent_ngAfterViewChecked");
   }
 
   onTick() {
@@ -93,6 +106,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this._warningService.hideWarning();
       this._zone.run(() => console.log(`setTimeout(...)`));
     }, 3000);
+  }
+
+  onInterval() {
+    const interval = setInterval(() => this._zone.run(() => console.log(`hello from interval`)), 4000);
+
+    setTimeout(() => clearInterval(interval), 10000);
   }
 
   onClear() {
@@ -125,10 +144,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this._dirtyCheckColoringService.busy$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((busy) => {
       this._apptickButton.nativeElement.disabled = busy;
       this._timeoutButton.nativeElement.disabled = busy;
+      this._intervalButton.nativeElement.disabled = busy;
       this._clickButton.nativeElement.disabled = busy;
       this._autoClearCheckbox.nativeElement.disabled = busy;
       this._triggerChangeButton.nativeElement.disabled = busy;
       this._propagateByValueCheckbox.nativeElement.disabled = busy;
+      this._propagateByInputSignalCheckbox.nativeElement.disabled = busy;
       this._propagateByRefCheckbox.nativeElement.disabled = busy;
       this._propagateByObservableCheckbox.nativeElement.disabled = busy;
       this._propagateInZoneCheckbox.nativeElement.disabled = busy;
@@ -144,6 +165,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.value++;
     if (this.isPropagateByValue()) {
       this.inputByVal = this.value;
+    }
+    if (this.isPropagateByInputSignal()) {
+      this.inputSignal.set(this.value);
     }
     if (this.isPropagateByRef()) {
       this.inputByRef.value = this.value;
@@ -164,6 +188,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private isPropagateByValue(): boolean {
     return this._propagateByValueCheckbox.nativeElement.checked;
+  }
+
+  private isPropagateByInputSignal(): boolean {
+    return this._propagateByInputSignalCheckbox.nativeElement.checked;
   }
 
   private isPropagateByRef(): boolean {

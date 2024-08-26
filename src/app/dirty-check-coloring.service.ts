@@ -16,7 +16,10 @@ export class DirtyCheckColoringService {
     return this._autoClearColoring;
   }
 
-  constructor(private _zone: NgZone, private _delayedScheduler: DelayedScheduler) {}
+  constructor(
+    private _zone: NgZone,
+    private _delayedScheduler: DelayedScheduler,
+  ) {}
 
   public clearColoring(): void {
     this._clearColoring$.next();
@@ -42,7 +45,7 @@ export class DirtyCheckColoringService {
         this._delayedScheduler.done$
           .pipe(
             take(1), // subscribe once
-            delay(1000) // clear after 1s
+            delay(1000), // clear after 1s
           )
           .subscribe(() => {
             element.classList.remove(cssClass);
@@ -52,7 +55,7 @@ export class DirtyCheckColoringService {
         this._delayedScheduler.done$
           .pipe(
             take(1), // subscribe once
-            delayWhen(() => this._clearColoring$)
+            delayWhen(() => this._clearColoring$),
           )
           .subscribe(() => {
             element.classList.remove(cssClass);
